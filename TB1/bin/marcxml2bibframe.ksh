@@ -5,7 +5,8 @@ data=/s/SUL/Dataload/LD4P
 m2b=/s/SUL/Bin/Marc2Bibframe/marc2bibframe
 jvm_args="-Xms3G -Xmx6G"
 
-for F in `ls $data/Marcxml` do
+for F in `ls $data/Marcxml`
+do
   # convert to bibframe
   /usr/bin/java -$jvm_args -cp $m2b/lib/saxon9he.jar net.sf.saxon.Query $m2b/xbin/saxon.xqy \
                 marcxmluri="$data/Marcxml/$F" baseuri="http://linked-data-test.stanford.edu/library/" \
