@@ -2,11 +2,18 @@
 # process all files in the Marc_wURIs dir and send to /s/SUL/Dataload/LD4P/Marcxml - jkg
 #
 data=/s/SUL/Dataload/LD4P
+TBdir=/s/SUL/Bin/LD4P/TB1
+stamp=`date "+%Y%m%d%H%s"`
 
+# Gather all the marc records and Make 1 file
 for F in `find $data/Marc -type f`
 do
-  /usr/bin/java -classpath ../lib/marc4j.jar:../lib/ojdbc14.jar:./classes \
-                ../classes/MarcToXMLsf0 $F > $data/Marcxml/stf.`date "+%Y%m%d%H%s"`.xml 2>> ../log/errors
+  cat $F >> $data/marc.$stamp
 
-  mv $F $data/Marc/Archive/.
+  mv $F $data/Archive/Marc/.
 done
+  
+/usr/bin/java -classpath $TBdir/lib/marc4j.jar:$TBdir/lib/ojdbc14.jar:$TBdir/classes/. MarcToXMLsf0 \
+              $data/marc.$stamp > $data/Marcxml/stf.$stamp.xml 2>> $data/log/errors 
+
+rm $data/marc.$stamp

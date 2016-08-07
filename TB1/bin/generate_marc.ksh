@@ -9,7 +9,7 @@ do
   echo "catalogdumping $F"
   echo ""
 
-  cat $F | catalogdump -om -kc -z 2>/dev/null > $data/Marc/stf.`date "+%Y%m%d%H%s"`.mrc 2>> ../log/errors
+  cat $F | catalogdump -om -kc -z 2>/dev/null > $data/Marc/stf.`date "+%Y%m%d%H%s"`.mrc 2>> $data/log/errors
   
-  mv $F $data/Ckeys/Archive/.
+  mv $F $data/Archive/Ckeys/.
 done

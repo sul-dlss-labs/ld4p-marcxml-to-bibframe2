@@ -1,11 +1,12 @@
 #!/bin/ksh
 # The pipeline...
 #
+TBD=/s/SUL/Bin/LD4P/TB1/bin
 
 # . ckey_sel_for_convert.ksh
 
-. generate_marc.ksh
+. $TBD/generate_marc.ksh
 
-. generate_marcxml_with_auth_uris.ksh
+. $TBD/generate_marcxml_with_auth_uris.ksh
 
-. marcxml2bibframe.ksh
+. $TBD/marcxml2bibframe.ksh

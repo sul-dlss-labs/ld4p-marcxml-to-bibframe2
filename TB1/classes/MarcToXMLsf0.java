@@ -24,7 +24,7 @@ import oracle.jdbc.pool.OracleConnectionCacheManager;
 
 public class MarcToXMLsf0 {
 
-  public static void Main (String args[]) {
+  public static void main (String args[]) {
 
     System.err.println("\nCONVERTING MARC TO XML\n");
 

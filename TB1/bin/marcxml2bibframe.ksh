@@ -3,14 +3,18 @@
 #
 data=/s/SUL/Dataload/LD4P
 m2b=/s/SUL/Bin/Marc2Bibframe/marc2bibframe
-jvm_args="-Xms3G -Xmx6G"
 
 for F in `find $data/Marcxml -type f`
 do
   # convert to bibframe
-  /usr/bin/java $jvm_args -classpath $m2b/lib/saxon9he.jar net.sf.saxon.Query $m2b/xbin/saxon.xqy \
-                marcxmluri="$data/Marcxml/$F" baseuri="http://linked-data-test.stanford.edu/library/" \
-                serialization="json" true 1>$data/RDF/stf.`date "+%Y%m%d%H%s"`.rdf 2>> ../log/errors
+  # java -cp /path/to/saxon9he.jar net.sf.saxon.Query saxon.xqy \
+  # marcxmluri=/path/to/marc/xml/file baseuri=http://my-base-uri/ serialization=rdfxml
 
-  mv $F $data/Marcxml/Archive/.
+  /usr/bin/java -classpath lib/saxon9he.jar net.sf.saxon.Query $m2b/xbin/saxon.xqy \
+                marcxmluri=$F baseuri="http://linked-data-test.stanford.edu/library/" \
+                serialization="rdfxml" 1>$data/RDF/stf.`date "+%Y%m%d%H%s"`.rdf 2>> $data/log/errors
+
+  echo "NO M2B CONVERSION ERRORS in $F.." >> $data/log/errors
+
+  mv $F $data/Archive/Marcxml/.
 done
