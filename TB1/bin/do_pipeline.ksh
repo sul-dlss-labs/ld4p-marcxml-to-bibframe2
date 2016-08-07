@@ -8,4 +8,4 @@
 
 . generate_marcxml_with_auth_uris.ksh
 
-.  marcxml2bibframe.ksh
+. marcxml2bibframe.ksh
