@@ -1,10 +1,11 @@
 #!/bin/ksh
 # The pipeline...
 #
-# ./ckey_sel_for_convert.ksh
 
-generate_marc.ksh
+# . ckey_sel_for_convert.ksh
 
-generate_marcxml_with_auth_uris.ksh
+. generate_marc.ksh
 
-marcxml2bibframe.ksh
+. generate_marcxml_with_auth_uris.ksh
+
+.  marcxml2bibframe.ksh
