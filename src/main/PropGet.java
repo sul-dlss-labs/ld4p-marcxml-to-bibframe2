@@ -5,10 +5,8 @@ import java.util.Properties;
 
 class PropGet {
 
-    static Properties getProps() throws NullPointerException, IOException {
+    static Properties getProps(String propFile) throws NullPointerException, IOException {
 
-        String propFile;
-        propFile = "main/resources/server.conf";
         props().load(in(propFile));
         in(propFile).close();
         return props();

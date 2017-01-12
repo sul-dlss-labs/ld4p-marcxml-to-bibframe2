@@ -15,7 +15,7 @@ class AuthDBConnection {
 
     static Connection open() throws IOException {
 
-        Properties props = PropGet.getProps();
+        Properties props = PropGet.getProps("main/resources/server.conf");
         OracleDataSource ods;
 
         String USER = props.getProperty("USER");
