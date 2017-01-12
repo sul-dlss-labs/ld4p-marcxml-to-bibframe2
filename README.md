@@ -32,12 +32,12 @@ Code repository to create software that will reify the goals of the initial LD4P
 
 - Uses the Marc4J library to transform the MARC record to MarcXML.
 
--- The MARC record must have the authority key delimiter  output in the system record dump.
--- When encountering an authority key subfield delimiter ('?' or '=') it will add a subfield 0 to the MarcXML record
--- for each 92X field in order to leverage the functionality of the LOC marc2bibframe converter's ability to create
--- bf:hasAuthority elements for URI's present in that subfield (BF1.0).
+    - The MARC record must have the authority key delimiter  output in the system record dump.
+    - When encountering an authority key subfield delimiter ('?' or '=') it will add a subfield 0 to the MarcXML record 
+    - for each 92X field in order to leverage the functionality of the LOC marc2bibframe converter's ability to create
+    - bf:hasAuthority elements for URI's present in that subfield (BF1.0).
 
--Look for the Marcxml file and send it to the LOC BF1 converter
+- Look for the Marcxml file and send it to the LOC BF1 converter
 
 All files are moved to the Archive/.. folder for future reference.
 
@@ -46,10 +46,19 @@ All files are moved to the Archive/.. folder for future reference.
 /s/SUL/Bin/LD4P/TB1/bin/do_pipeline.ksh
 ```
 
-##Compiling and Executing the pre- and post- processing Java packages
+##Compiling and Executing the pre- and post-marc processing Java packages (and submitting code coverage data)
 
-Import the project into a Java IDE and use the build tools provided, or from the command line:
+Import the project into a Java IDE and use the provided iDE build tools. Don't forget to set the Maven property 
+`repoToken` to be the coveralls project repository token, using `-DrepoToken=yourcoverallsprojectrepositorytoken` in the 
+configuration section for the plugin in your IDE.
+
+If you want to build the project and run the program from the command line:
 ```
-$ mvn package
-$ mvn exec:java
+mvn package
+mvn exec:java
+```
+
+To run the tests and submit coverage report from the command line:
+```
+mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken
 ```
