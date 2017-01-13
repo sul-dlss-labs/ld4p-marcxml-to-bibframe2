@@ -13,6 +13,6 @@ buildNumber.properties
 # Exclude maven wrapper
 !/.mvn/wrapper/maven-wrapper.jar
 
-src/main/resources/server.conf
+conversiontracerbullet/src/main/resources/server.conf
 .idea/
 log/

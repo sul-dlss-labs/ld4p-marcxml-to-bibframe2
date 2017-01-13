@@ -4,18 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>stanford</groupId>
+    <groupId>org.stanford</groupId>
     <artifactId>ld4p-tracer-bullets</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <packaging>pom</packaging>
+    <name>LD4P Tracer Bullets</name>
+    <modules>
+        <module>conversiontracerbullet</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <build>
         <finalName>${project.artifactId}</finalName>
-        <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
         <resources>
             <resource>
                 <directory>src</directory>
@@ -34,7 +35,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <!--<compilerArgument>${compilerArgument}</compilerArgument>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -42,7 +42,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
-                    <mainClass>main.MarcToXMLsf0</mainClass>
+                    <mainClass>main.java.org.stanford.MarcToXML</mainClass>
                 </configuration>
             </plugin>
             <plugin>
