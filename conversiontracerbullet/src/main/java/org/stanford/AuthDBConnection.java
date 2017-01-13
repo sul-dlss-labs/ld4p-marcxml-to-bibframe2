@@ -1,4 +1,4 @@
-package main;
+package org.stanford;
 
 import oracle.jdbc.pool.OracleDataSource;
 
@@ -15,15 +15,14 @@ class AuthDBConnection {
 
     static Connection open() throws IOException {
 
-        Properties props = PropGet.getProps("main/resources/server.conf");
         OracleDataSource ods;
+        Connection connection = null;
 
+        Properties props = PropGet.getProps(AuthDBConnection.class.getResource("/server.conf").getFile());
         String USER = props.getProperty("USER");
         String PASS = props.getProperty("PASS");
         String SERVER = props.getProperty("SERVER");
         String SERVICE_NAME = props.getProperty("SERVICE_NAME");
-
-        Connection connection = null;
 
         try {
             String url = "jdbc:oracle:thin:@" + SERVER + ":1521:" + SERVICE_NAME;

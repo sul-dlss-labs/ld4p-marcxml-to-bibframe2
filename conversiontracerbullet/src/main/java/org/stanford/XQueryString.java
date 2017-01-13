@@ -1,4 +1,4 @@
-package main;
+package org.stanford;
 
 /**
  * Created by Joshua Greben jgreben on 1/12/17.

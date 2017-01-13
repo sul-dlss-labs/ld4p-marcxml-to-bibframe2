@@ -1,4 +1,4 @@
-package main;
+package org.stanford;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,15 +9,14 @@ import java.sql.Statement;
  * Created by Joshua Greben jgreben on 1/10/17.
  * Stanford University Libraries, DLSS
  */
-class AuthIDfromDB {
+class AuthURIfromDB {
 
-    static String lookup(String key, Connection connection) {
-
+    static String lookup(String authID, String tagNum, Connection connection) {
         String result = "";
-        String sql;
 
+        String sql = "SELECT AUTHORVED.tag FROM AUTHORVED LEFT JOIN AUTHORITY ON AUTHORVED.offset = AUTHORITY.ved_offset" +
+                " where AUTHORITY.authority_id='" + authID + "' and AUTHORVED.tag_number='" + tagNum + "'";
         try {
-            sql = "select authority_id from authority where authority_key = '" + key + "'";
             Statement s;
             ResultSet rs;
 
@@ -26,13 +25,13 @@ class AuthIDfromDB {
             rs = s.executeQuery(sql);
 
             while (rs.next()) {
-                result = rs.getString(1).trim();
+                result = rs.getString(1);
             }
             rs.close();
             s.close();
         }
         catch(SQLException e) {
-            System.err.println("Lookup AuthID SQLException:" + e.getMessage());
+            System.err.println("Lookup URI SQLException:" + e.getMessage());
         }
 
         return result;

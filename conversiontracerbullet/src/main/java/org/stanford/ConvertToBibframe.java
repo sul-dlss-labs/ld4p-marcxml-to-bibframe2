@@ -1,4 +1,4 @@
-package main;
+package org.stanford;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.*;
@@ -25,7 +25,7 @@ class ConvertToBibframe {
     private static final Logger conversionLog = LogManager.getLogger();
 
     private static Properties props () throws IOException {
-        return new Properties(PropGet.getProps("src/main/resources/conversion.conf"));
+        return new Properties(PropGet.getProps(ConvertToBibframe.class.getResource("/conversion.conf").getFile()));
     }
 
     public static void main(String[] args) throws Exception  {
