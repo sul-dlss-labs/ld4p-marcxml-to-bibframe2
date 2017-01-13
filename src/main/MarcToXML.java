@@ -1,5 +1,7 @@
 package main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.marc4j.*;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
@@ -19,12 +21,15 @@ import java.util.List;
  * for each 92X field in order to leverage the functionality of the LOC marc2bibframe converter's ability to create
  * bf:hasAuthority elements for URI's present in that subfield (BF1.0).
  */
-class Transform {
+class MarcToXML {
 
-    static void toXMLrecord(String marcfile) throws NullPointerException, MarcException, IOException {
+    private static final Logger log = LogManager.getLogger();
 
-        try
-        {
+    public static void main (String [] args) throws NullPointerException, MarcException, IOException {
+        log.info("\nCONVERTING MARC TO XML\n%n");
+
+        try {
+            String marcfile = args[0];
             while (reader(input(marcfile)).hasNext()) {
 
                 for (Object field : fields(record(reader(input(marcfile))))) {
@@ -62,6 +67,7 @@ class Transform {
             System.err.println(e.getMessage());
         }
 
+        log.info("DONE WITH MARCXML CONVERSION\n");
         writer().close();
     }
 
