@@ -1,7 +1,7 @@
 package org.stanford;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.marc4j.*;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
@@ -23,10 +23,10 @@ import java.util.List;
  */
 class MarcToXML {
 
-    private static final Logger log = LogManager.getLogger();
+    //private static final Logger log = LogManager.getLogger();
 
     public static void main (String [] args) throws NullPointerException, MarcException, IOException {
-        log.info("\nCONVERTING MARC TO XML\n%n");
+        //log.info("\nCONVERTING MARC TO XML\n%n");
 
         try {
             String marcfile = args[0];
@@ -67,7 +67,7 @@ class MarcToXML {
             System.err.println(e.getMessage());
         }
 
-        log.info("DONE WITH MARCXML CONVERSION\n");
+        //log.info("DONE WITH MARCXML CONVERSION\n");
         writer().close();
     }
 

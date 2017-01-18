@@ -57,7 +57,8 @@ class ConvertToBibframe {
         selector.setContextItem(doc);
 
         XQueryCompiler comp = proc.newXQueryCompiler();
-        String query = XQueryString.query(CREATE_BNODE);
+        XQueryString xQuery = new XQueryString();
+        String query = xQuery.query(CREATE_BNODE);
         XQueryExecutable exp = comp.compile(query);
         XQueryEvaluator qe = exp.load();
 
