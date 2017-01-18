@@ -42,9 +42,14 @@ Code repository to create software that will reify the goals of the initial LD4P
 All files are moved to the Archive/.. folder for future reference.
 
 ###Executing the pipeline scripts
+
+The scripts that create the MARC files for conversion are located in the `ld4p-tracer-bullet-scripts` repository (https://github.com/sul-dlss/ld4p-tracer-bullet-scripts).
+Clone that repository and run the wrapper script:
+
 ```
 /s/SUL/Bin/LD4P/TB1/bin/do_pipeline.ksh
 ```
+Then run `mvn exec:java`
 
 ##Dependencies
 
