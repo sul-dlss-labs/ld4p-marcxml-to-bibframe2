@@ -61,10 +61,10 @@ credentials to maven settings.  Follow maven instructions to encrypt the passwor
   - encrypt a master password:
 
         $ mvn --encrypt-master-password
-        Master password:
+        Master password: TYPE_YOUR_PASSWD_HERE
         {L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}
 
-  - add your master password to `~/.m2/settings-security.xml` in a block like:
+  - add this master password to `~/.m2/settings-security.xml` in a block like:
 
         <settingsSecurity>
             <master>{L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}</master>
@@ -73,10 +73,10 @@ credentials to maven settings.  Follow maven instructions to encrypt the passwor
   - encrypt server password:
 
         $ mvn --encrypt-password
-        Password:
+        Password: TYPE_YOUR_PASSWD_HERE
         {JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}
 
-  - add your encrypted password to `~/.m2/settings.xml` using this template:
+  - add this encrypted password to `~/.m2/settings.xml` using this template:
 
         <servers>
           <server>
