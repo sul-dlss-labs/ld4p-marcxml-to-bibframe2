@@ -46,6 +46,69 @@ All files are moved to the Archive/.. folder for future reference.
 /s/SUL/Bin/LD4P/TB1/bin/do_pipeline.ksh
 ```
 
+##Dependencies
+
+- Java 8
+- Maven 3
+
+The Oracle JDBC maven artifacts require a license, follow the instructions at:
+- http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm
+- https://blogs.oracle.com/dev2dev/entry/oracle_maven_repository_instructions_for
+
+Once the Oracle sign-up/sign-in and licence agreement is accepted, add the sign-in
+credentials to maven settings.  Follow maven instructions to encrypt the passwords, see
+- https://maven.apache.org/guides/mini/guide-encryption.html
+  - encrypt a master password:
+
+        $ mvn --encrypt-master-password
+        Master password:
+        {L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}
+
+  - add your master password to `~/.m2/settings-security.xml` in a block like:
+
+        <settingsSecurity>
+            <master>{L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}</master>
+        </settingsSecurity>
+
+  - encrypt server password:
+
+        $ mvn --encrypt-password
+        Password:
+        {JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}
+
+  - add your encrypted password to `~/.m2/settings.xml` using this template:
+
+        <servers>
+          <server>
+            <id>maven.oracle.com</id>
+            <username>your_oracle_username</username>
+            <password>{JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}</password>
+
+            <configuration>
+              <basicAuthScope>
+                <host>ANY</host>
+                <port>ANY</port>
+                <realm>OAM 11g</realm>
+              </basicAuthScope>
+              <httpConfiguration>
+                <all>
+                  <params>
+                    <property>
+                      <name>http.protocol.allow-circular-redirects</name>
+                      <value>%b,true</value>
+                    </property>
+                  </params>
+                </all>
+              </httpConfiguration>
+            </configuration>
+          </server>
+        </servers>
+
+- For additional information about maven settings, see
+    - https://maven.apache.org/settings.html
+    - https://books.sonatype.com/nexus-book/reference/_adding_credentials_to_your_maven_settings.html
+
+
 ##Compiling and Executing the pre- and post-marc processing Java packages (and submitting code coverage data)
 
 Import the project into a Java IDE and use the provided iDE build tools. Don't forget to set the Maven property 
