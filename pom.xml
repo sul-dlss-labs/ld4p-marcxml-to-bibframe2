@@ -102,6 +102,28 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <!--http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm-->
+    <repositories>
+        <repository>
+            <id>maven.oracle.com</id>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://maven.oracle.com</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven.oracle.com</id>
+            <url>https://maven.oracle.com</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
         <!--<dependency>-->
             <!--<groupId>org.apache.logging.log4j</groupId>-->
@@ -127,9 +149,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc14 -->
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc14</artifactId>
-            <version>10.2.0.2.0</version>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
         <dependency>
