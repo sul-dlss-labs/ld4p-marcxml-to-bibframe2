@@ -8,7 +8,6 @@ cache:
 
 before_install:
   - source .travis/maven_settings.sh
-  - mvn clean
   - mvn compile
 
 # The install and script defaults for Java are given at
