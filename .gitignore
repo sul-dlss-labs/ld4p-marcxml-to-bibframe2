@@ -13,6 +13,18 @@ buildNumber.properties
 # Exclude maven wrapper
 !/.mvn/wrapper/maven-wrapper.jar
 
-conversiontracerbullet/src/main/resources/server.conf
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
 .idea/
-log/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+conversiontracerbullet/src/main/resources/server.conf
+
