@@ -65,49 +65,48 @@ credentials to maven settings.  Follow maven instructions to encrypt the passwor
 - https://maven.apache.org/guides/mini/guide-encryption.html
   - encrypt a master password:
 
-        $ mvn --encrypt-master-password
-        Master password: TYPE_YOUR_PASSWD_HERE
-        {L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}
+          $ mvn --encrypt-master-password
+          Master password: TYPE_YOUR_PASSWD_HERE
+          {L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}
 
   - add this master password to `~/.m2/settings-security.xml` in a block like:
 
-        <settingsSecurity>
-            <master>{L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}</master>
-        </settingsSecurity>
+          <settingsSecurity>
+              <master>{L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}</master>
+          </settingsSecurity>
 
   - encrypt server password:
 
-        $ mvn --encrypt-password
-        Password: TYPE_YOUR_PASSWD_HERE
-        {JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}
+          $ mvn --encrypt-password
+          Password: TYPE_YOUR_PASSWD_HERE
+          {JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}
 
   - add this encrypted password to `~/.m2/settings.xml` using this template:
 
-        <servers>
-          <server>
-            <id>maven.oracle.com</id>
-            <username>your_oracle_username</username>
-            <password>{JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}</password>
-
-            <configuration>
-              <basicAuthScope>
-                <host>ANY</host>
-                <port>ANY</port>
-                <realm>OAM 11g</realm>
-              </basicAuthScope>
-              <httpConfiguration>
-                <all>
-                  <params>
-                    <property>
-                      <name>http.protocol.allow-circular-redirects</name>
-                      <value>%b,true</value>
-                    </property>
-                  </params>
-                </all>
-              </httpConfiguration>
-            </configuration>
-          </server>
-        </servers>
+          <servers>
+            <server>
+              <id>maven.oracle.com</id>
+              <username>your_oracle_username</username>
+              <password>{JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}</password>
+              <configuration>
+                <basicAuthScope>
+                  <host>ANY</host>
+                  <port>ANY</port>
+                  <realm>OAM 11g</realm>
+                </basicAuthScope>
+                <httpConfiguration>
+                  <all>
+                    <params>
+                      <property>
+                        <name>http.protocol.allow-circular-redirects</name>
+                        <value>%b,true</value>
+                      </property>
+                    </params>
+                  </all>
+                </httpConfiguration>
+              </configuration>
+            </server>
+          </servers>
 
 - For additional information about maven settings, see
     - https://maven.apache.org/settings.html
