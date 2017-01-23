@@ -17,17 +17,6 @@
     </properties>
     <build>
         <finalName>${project.artifactId}</finalName>
-        <resources>
-            <resource>
-                <directory>src</directory>
-                <includes>
-                    <include>**</include>
-                </includes>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -86,6 +75,7 @@
             </plugin>
         </plugins>
     </build>
+
     <reporting>
         <plugins>
             <plugin>
@@ -103,62 +93,7 @@
         </plugins>
     </reporting>
 
-    <!--http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm-->
-    <repositories>
-        <repository>
-            <id>maven.oracle.com</id>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>https://maven.oracle.com</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven.oracle.com</id>
-            <url>https://maven.oracle.com</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.logging.log4j</groupId>-->
-            <!--<artifactId>log4j-api</artifactId>-->
-            <!--<version>2.7</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.7</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.marc4j/marc4j -->
-        <dependency>
-            <groupId>org.marc4j</groupId>
-            <artifactId>marc4j</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc14 -->
-        <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>12.1.0.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
-            <version>9.4</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
@@ -175,18 +110,6 @@
                     </artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jdom/jdom2 -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
-            <version>2.0.6</version>
         </dependency>
     </dependencies>
 </project>
