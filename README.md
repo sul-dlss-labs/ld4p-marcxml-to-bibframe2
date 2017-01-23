@@ -125,6 +125,12 @@ mvn package
 mvn exec:java
 ```
 
+There is also a packaged JAR with dependencies that should work outside of this project, e.g.
+```
+cp conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar ~/lib/ld4p_conversion.jar
+java -cp ~/lib/ld4p_conversion.jar org.stanford.MarcToXML ./files/marc_file.mrc  ./files/mark_file.xml
+```
+
 To run the tests and submit coverage report from the command line:
 ```
 mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken
