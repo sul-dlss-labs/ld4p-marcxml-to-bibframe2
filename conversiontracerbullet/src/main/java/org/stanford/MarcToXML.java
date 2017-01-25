@@ -1,7 +1,5 @@
 package org.stanford;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
 import org.marc4j.*;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
@@ -10,20 +8,21 @@ import org.marc4j.marc.Subfield;
 
 import java.io.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * Created by Joshua Greben jgreben on 1/10/17.
- * Stanford University Libraries, DLSS
  * Uses the Marc4J library to transform the MARC record to MarcXML.
- * The MARC record must have the authority key delimiter  output in the system record dump.
+ * The MARC record must have the authority key delimiter output in the system record dump.
  * When encountering an authority key subfield delimiter ('?' or '=') it will add a subfield 0 to the MarcXML record
  * for each 92X field in order to leverage the functionality of the LOC marc2bibframe converter's ability to create
  * bf:hasAuthority elements for URI's present in that subfield (BF1.0).
  */
 class MarcToXML {
 
-    //private static final Logger log = LogManager.getLogger();
+    private static Logger log = LogManager.getLogger(MarcToXML.class.getName());
 
     public static void main (String [] args) throws NullPointerException, MarcException, IOException {
         //log.info("\nCONVERTING MARC TO XML\n%n");
@@ -42,29 +41,32 @@ class MarcToXML {
 
                         if (codeStr.equals("=")) {  // authority key (-z flag) from catalogdump
 
-                            String key = data.substring(2);
-                            String authID = AuthIDfromDB.lookup(key, conn());
+                            try {
+                                String key = data.substring(2);
+                                String authID = AuthIDfromDB.lookup(key, conn());
 
-                            //TODO consider just getting all the URI's from the authority record here
-                            String[] tagNs = {"920", "921", "922"};
-                            for (String n : tagNs) {
-                                String uri = AuthURIfromDB.lookup(authID, n, conn());
-                                if (uri.length() > 0) {
-                                    dataField(field).addSubfield(factory().newSubfield('0', uri));
+                                //TODO consider just getting all the URI's from the authority record here
+                                String[] tagNs = {"920", "921", "922"};
+                                for (String n : tagNs) {
+                                    String uri = AuthURIfromDB.lookup(authID, n, conn());
+                                    if (uri.length() > 0) {
+                                        dataField(field).addSubfield(factory().newSubfield('0', uri));
+                                    }
                                 }
+                                dataField(field).removeSubfield(sf);
+                            } catch (SQLException e) {
+                                reportErrors(e);
                             }
-                            dataField(field).removeSubfield(sf);
                         }
                         if (codeStr.equals("?")) {
                             dataField(field).removeSubfield(sf);
                         }
                     }
                 }
-
                 writer().write(record(reader(input(marcfile))));
             }
         } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+            reportErrors(e);
         }
 
         //log.info("DONE WITH MARCXML CONVERSION\n");
@@ -87,7 +89,7 @@ class MarcToXML {
         return new MarcStreamReader(input);
     }
 
-    private static Connection conn() throws IOException {
+    private static Connection conn() throws IOException, SQLException {
         return AuthDBConnection.open();
     }
 
@@ -110,5 +112,12 @@ class MarcToXML {
     @SuppressWarnings("unchecked")
     private static Object[] subfields(Object field) {
         return subFieldList(field).toArray(new Object[subFieldList(field).size()]);
+    }
+
+    private static void reportErrors(Exception e) {
+        String msg = e.getMessage();
+        log.fatal(msg);
+        System.err.println(msg);
+        e.printStackTrace();
     }
 }

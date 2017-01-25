@@ -3,50 +3,96 @@ package org.stanford;
 import oracle.jdbc.pool.OracleDataSource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- *  Created by Joshua Greben jgreben on 1/10/17.
- *  Stanford University Libraries, DLSS
+ * Stanford University Libraries, DLSS
  */
 class AuthDBConnection {
 
-    static Connection open() throws IOException {
+    private static OracleDataSource ds = null;
+    private static String server = null;
+    private static String service = null;
+    private static String userName = null;
+    private static String userPass = null;
 
-        OracleDataSource ods;
-        Connection connection = null;
+    public static Connection open() throws SQLException, IOException {
+        setDataSource();
+        return ds.getConnection();
+    }
 
-        Properties props = PropGet.getProps(AuthDBConnection.class.getResource("/server.conf").getFile());
-        String USER = props.getProperty("USER");
-        String PASS = props.getProperty("PASS");
-        String SERVER = props.getProperty("SERVER");
-        String SERVICE_NAME = props.getProperty("SERVICE_NAME");
+    public static String getServer() {
+        return server;
+    }
 
-        try {
-            String url = "jdbc:oracle:thin:@" + SERVER + ":1521:" + SERVICE_NAME;
+    public static void setServer(String server) {
+        AuthDBConnection.server = server;
+    }
 
-            ods = new OracleDataSource();
-            ods.setURL(url);
-            ods.setUser(USER);
-            ods.setPassword(PASS);
-            ods.setConnectionCachingEnabled(false);
-            ods.setConnectionCacheName("CACHE");
+    public static String getService() {
+        return service;
+    }
 
-            Properties cacheProps = new Properties();
-            cacheProps.setProperty("MinLimit", "1");
-            cacheProps.setProperty("InitialLimit", "1");
-            cacheProps.setProperty("AbandonedConnectionTimeout", "100");
-            cacheProps.setProperty("PropertyCheckInterval", "80");
+    public static void setService(String service) {
+        AuthDBConnection.service = service;
+    }
 
-            ods.setConnectionCacheProperties(cacheProps);
-            connection = ods.getConnection();
-        }
-        catch(SQLException e) {
-            System.err.println("SQLException:" + e.getMessage());
-        }
+    public static String getUserName() {
+        return userName;
+    }
 
-        return connection;
+    public static void setUserName(String userName) {
+        AuthDBConnection.userName = userName;
+    }
+
+    public static String getUserPass() {
+        return userPass;
+    }
+
+    public static void setUserPass(String userPass) {
+        AuthDBConnection.userPass = userPass;
+    }
+
+    static void setDataSource() throws SQLException, IOException {
+        setDataSourceProperties();
+        ds = new OracleDataSource();
+        ds.setURL("jdbc:oracle:thin:@" + server + ":1521:" + service);
+        ds.setUser(userName);
+        ds.setPassword(userPass);
+        setDataSourceCache();
+    }
+
+    static void setDataSourceProperties() throws IOException {
+        Properties props = getDataSourceProperties();
+        if (server == null)
+            server = props.getProperty("SERVER");
+        if (service == null)
+            service = props.getProperty("SERVICE_NAME");
+        if (userName == null)
+            userName = props.getProperty("USER");
+        if (userPass == null)
+            userPass = props.getProperty("PASS");
+    }
+
+    static Properties getDataSourceProperties() throws IOException {
+        Properties props = new Properties();
+        InputStream in = AuthDBConnection.class.getClassLoader().getResourceAsStream("server.conf");
+        props.load(in);
+        in.close();
+        return props;
+    }
+
+    static void setDataSourceCache() throws SQLException {
+        Properties cacheProps = new Properties();
+        cacheProps.setProperty("MinLimit", "1");
+        cacheProps.setProperty("InitialLimit", "1");
+        cacheProps.setProperty("AbandonedConnectionTimeout", "100");
+        cacheProps.setProperty("PropertyCheckInterval", "80");
+        ds.setConnectionCachingEnabled(false);
+        ds.setConnectionCacheName("CACHE");
+        ds.setConnectionCacheProperties(cacheProps);
     }
 }
