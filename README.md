@@ -43,15 +43,14 @@ All files are moved to the Archive/.. folder for future reference.
 
 ###Executing the pipeline scripts
 
-The scripts that create the MARC files for conversion are located in the `ld4p-tracer-bullet-scripts` repository (https://github.com/sul-dlss/ld4p-tracer-bullet-scripts).
-Clone that repository and run the wrapper script:
+The scripts that create the MARC files for conversion are located in the
+[sul-dlss/ld4p-tracer-bullet-scripts](https://github.com/sul-dlss/ld4p-tracer-bullet-scripts)
+repository.  The instructions in that repository can be followed to run those scripts.
 
-```
-/s/SUL/Bin/LD4P/TB1/bin/do_pipeline.ksh
-```
-Then run `mvn exec:java`
 
-##Dependencies
+## Development
+
+### Dependencies
 
 - Java 8
 - Maven 3
@@ -113,25 +112,43 @@ credentials to maven settings.  Follow maven instructions to encrypt the passwor
     - https://books.sonatype.com/nexus-book/reference/_adding_credentials_to_your_maven_settings.html
 
 
-##Compiling and Executing the pre- and post-marc processing Java packages (and submitting code coverage data)
 
-Import the project into a Java IDE and use the provided iDE build tools. Don't forget to set the Maven property 
-`repoToken` to be the coveralls project repository token, using `-DrepoToken=yourcoverallsprojectrepositorytoken` in the 
-configuration section for the plugin in your IDE.
+### Compiling and Executing Conversions
 
-If you want to build the project and run the program from the command line:
+There are convenient wrapper scripts available from the
+[sul-dlss/ld4p-tracer-bullet-scripts](https://github.com/sul-dlss/ld4p-tracer-bullet-scripts)
+project.  To use those scripts, the artifacts of this project need to be
+downloaded or built from source.  To build this project, the
+[Apache Maven](https://maven.apache.org/) build
+tools must be available.
+
+To build and package the maven project (assuming maven is installed already):
 ```
+git clone https://github.com/sul-dlss/ld4p-tracer-bullets.git
+cd ld4p-tracer-bullets
 mvn package
-mvn exec:java
 ```
 
-There is also a packaged JAR with dependencies that should work outside of this project, e.g.
+The packaged JAR includes all dependencies, so it should work outside of this project.  The
+packaged JAR can be copied to a convenient location and used on the CLASSPATH or the command line, e.g.
 ```
 cp conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar ~/lib/ld4p_conversion.jar
-java -cp ~/lib/ld4p_conversion.jar org.stanford.MarcToXML ./files/marc_file.mrc  ./files/mark_file.xml
+java -cp ~/lib/ld4p_conversion.jar org.stanford.MarcToXML ./files/marc_file.mrc ./files/mark_file.xml
 ```
 
-To run the tests and submit coverage report from the command line:
+
+### Code Coverage Reports
+
+To run the tests and view a coverage report from the command line:
+```
+mvn clean cobertura:cobertura
+ls -l target/site/cobertura/
+firefox target/site/cobertura/index.html
+```
+
+The [Travis CI](https://travis-ci.org/sul-dlss/ld4p-tracer-bullets) builds run tests and submit
+a coverage report to [Coveralls](https://coveralls.io/github/sul-dlss/ld4p-tracer-bullets).
+To update Coveralls from the command line, try:
 ```
 mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken
 ```
