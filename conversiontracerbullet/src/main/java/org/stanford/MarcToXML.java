@@ -9,6 +9,7 @@ import org.marc4j.marc.Subfield;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -24,95 +25,116 @@ class MarcToXML {
 
     private static Logger log = LogManager.getLogger(MarcToXML.class.getName());
 
-    public static void main (String [] args) throws NullPointerException, MarcException, IOException {
-        //log.info("\nCONVERTING MARC TO XML\n%n");
+    private static Connection authDB = null;
+
+    public static void main (String [] args) throws NullPointerException, MarcException, IOException, SQLException {
+
+        MarcWriter writer = new MarcXmlWriter(System.out, true);
+        MarcFactory factory = MarcFactory.newInstance();
 
         try {
-            String marcfile = args[0];
-            while (reader(input(marcfile)).hasNext()) {
+            InputStream input = new FileInputStream(args[0]);
+            MarcReader reader = new MarcStreamReader(input);
+            Record record;
+            List fields;
+            List subFieldList;
+            Iterator dataFieldIterator;
+            DataField dataField;
 
-                for (Object field : fields(record(reader(input(marcfile))))) {
+            while (reader.hasNext()) {
+                record = reader.next();
 
-                    for (Object subfield : subfields(field)) {
-                        Subfield sf = (Subfield) subfield;
+                fields = record.getDataFields();
+                dataFieldIterator = fields.iterator();
+
+                while (dataFieldIterator.hasNext()) {
+                    // TODO: does this need to be cast?
+                    dataField = (DataField) dataFieldIterator.next();
+
+                    subFieldList = dataField.getSubfields();
+                    Object [] subFields = subFieldList.toArray(new Object[subFieldList.size()]);
+
+                    for (int s = 0; s < subFields.length; s++) {
+                        // TODO: does this need to be cast?
+                        Subfield sf = (Subfield) subFields[s];
                         char code = sf.getCode();
                         String codeStr = String.valueOf(code);
                         String data = sf.getData();
 
-                        if (codeStr.equals("=")) {  // authority key (-z flag) from catalogdump
+                        if (codeStr.equals("=")) {
+                            setAuthConnection();
 
-                            try {
-                                String key = data.substring(2);
-                                String authID = AuthIDfromDB.lookup(key, conn());
+                            String key = data.substring(2);
+                            String authID = AuthIDfromDB.lookup(key, authDB);
 
-                                //TODO consider just getting all the URI's from the authority record here
-                                String[] tagNs = {"920", "921", "922"};
-                                for (String n : tagNs) {
-                                    String uri = AuthURIfromDB.lookup(authID, n, conn());
-                                    if (uri.length() > 0) {
-                                        dataField(field).addSubfield(factory().newSubfield('0', uri));
-                                    }
-                                }
-                                dataField(field).removeSubfield(sf);
-                            } catch (SQLException e) {
-                                reportErrors(e);
+                            //TODO consider just getting all the URI's from the authority record here
+                            String[] tagNs = {"920", "921", "922"};
+                            for (String n : tagNs) {
+                                String uri = AuthURIfromDB.lookup(authID, n, authDB);
+                                if (uri.length() > 0)
+                                    dataField.addSubfield(factory.newSubfield('0', uri));
                             }
+                            dataField.removeSubfield(sf);
                         }
                         if (codeStr.equals("?")) {
-                            dataField(field).removeSubfield(sf);
+                            dataField.removeSubfield(sf);
                         }
                     }
                 }
-                writer().write(record(reader(input(marcfile))));
+                writer.write(record);
+                System.out.flush();
+
+                break; // testing processing for one record
+
             }
-        } catch (FileNotFoundException e) {
+        }
+        catch (NullPointerException | MarcException | FileNotFoundException e) {
             reportErrors(e);
         }
-
-        //log.info("DONE WITH MARCXML CONVERSION\n");
-        writer().close();
+        writer.close();
     }
 
-    private static MarcFactory factory() {
-        return MarcFactory.newInstance();
+//    private static MarcFactory factory() {
+//        return MarcFactory.newInstance();
+//    }
+//
+//    private static MarcWriter writer() {
+//        return new MarcXmlWriter(System.out, true);
+//    }
+//
+//    private static InputStream input(String marcfile) throws FileNotFoundException {
+//        return new FileInputStream(marcfile);
+//    }
+//
+//    private static MarcReader reader(InputStream input) {
+//        return new MarcStreamReader(input);
+//    }
+
+    private static void setAuthConnection() throws IOException, SQLException {
+        if ( authDB == null )
+            authDB = AuthDBConnection.open();
     }
 
-    private static MarcWriter writer() {
-        return new MarcXmlWriter(System.out, true);
-    }
-
-    private static InputStream input(String marcfile) throws FileNotFoundException {
-        return new FileInputStream(marcfile);
-    }
-
-    private static MarcReader reader(InputStream input) {
-        return new MarcStreamReader(input);
-    }
-
-    private static Connection conn() throws IOException, SQLException {
-        return AuthDBConnection.open();
-    }
-
-    private static Record record(MarcReader reader) {
-        return reader.next();
-    }
-
-    private static List fields(Record record) {
-        return record.getDataFields();
-    }
+//    private static Record record(MarcReader reader) {
+//        return reader.next();
+//    }
+//
+//    private static List fields(Record record) {
+//        return record.getDataFields();
+//    }
 
     private static DataField dataField(Object field) {
         return (DataField) field;
     }
 
-    private static List subFieldList(Object field) {
-        return dataField(field).getSubfields();
-    }
+//    private static List subFieldList(Object field) {
+//        return dataField(field).getSubfields();
+//    }
 
-    @SuppressWarnings("unchecked")
-    private static Object[] subfields(Object field) {
-        return subFieldList(field).toArray(new Object[subFieldList(field).size()]);
-    }
+//    @SuppressWarnings("unchecked")
+//    private static Object[] subfields(Object field) {
+//        return subFieldList(field).toArray(new Object[subFieldList(field).size()]);
+//    }
 
     private static void reportErrors(Exception e) {
         String msg = e.getMessage();
