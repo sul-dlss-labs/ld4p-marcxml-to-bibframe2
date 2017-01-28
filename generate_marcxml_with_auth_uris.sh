@@ -8,26 +8,24 @@ if [ "$LD4P_MARC" == "" ]; then
     source ${SCRIPT_PATH}/ld4p_configure.sh
 fi
 
-stamp=`date "+%Y%m%d%H%s"`
-MRC_FILE="${LD4P_DATA}/marc.${stamp}"
-XML_FILE="${LD4P_MARCXML}/stf.${stamp}.xml"
-
-# Gather all the dumped marc records and make 1 temp file, then clean up.
+# Find and convert any dumped marc record files; archive processed files.
+echo
 echo "Searching for MARC files: ${LD4P_MARC}"
-for F_MRC in `find ${LD4P_MARC} -type f`
+for MRC_FILE in `find ${LD4P_MARC} -type f | sort`
 do
-  cat $F_MRC >> ${MRC_FILE}
-  mv $F_MRC ${LD4P_DATA}/Archive/Marc/
+    filename=$(basename ${MRC_FILE} .mrc)
+    LOG_FILE="${LD4P_LOGS}/${filename}_MarcToXML.log"
+    SUCCESS=0
+    echo
+    echo "Converting MARC file:  ${MRC_FILE}"
+    echo "Output MARC-XML files: ${LD4P_MARCXML}/*.xml"
+    java -cp ${LD4P_JAR} org.stanford.MarcToXML ${MRC_FILE} ${LD4P_MARCXML} 2> ${LOG_FILE}
+    SUCCESS=$?
+    if [ ${SUCCESS} ]; then
+	mv $MRC_FILE ${LD4P_DATA}/Archive/Marc/
+    else
+	echo
+	echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${LD4P_LOGS}/errors
+    fi
 done
 
-# $MRC_FILE is assumed to be one large file of marc records
-if [ -f ${MRC_FILE} ]; then
-    java -cp ${LD4P_JAR} org.stanford.MarcToXML ${MRC_FILE} > ${XML_FILE} 2>> ${LD4P_LOGS}/errors
-    conversion_success=$?
-    rm ${MRC_FILE}  # always cleanup the concatenation of all the marc files
-    if [ ${conversion_success} != 0 ]; then
-        echo "ERROR: Conversion failed" && cat ${LD4P_LOGS}/errors && exit 1
-    fi
-else
-    echo "WARNING: MARC files are missing" | tee --append ${LD4P_LOGS}/errors
-fi
