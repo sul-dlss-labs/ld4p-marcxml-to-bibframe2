@@ -2,16 +2,22 @@ package org.stanford;
 
 import oracle.jdbc.pool.OracleDataSource;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Stanford University Libraries, DLSS
  */
 class AuthDBConnection {
+
+    private static Logger log = LogManager.getLogger(AuthDBConnection.class.getName());
 
     private static OracleDataSource ds = null;
     private static String server = null;
@@ -65,7 +71,7 @@ class AuthDBConnection {
         setDataSourceCache();
     }
 
-    static void setDataSourceProperties() throws IOException {
+    static void setDataSourceProperties() {
         Properties props = getDataSourceProperties();
         if (server == null)
             server = props.getProperty("SERVER");
@@ -77,11 +83,35 @@ class AuthDBConnection {
             userPass = props.getProperty("PASS");
     }
 
-    static Properties getDataSourceProperties() throws IOException {
+    static Properties getDataSourceProperties() {
+        Class cls = AuthDBConnection.class;
+        InputStream in = null;
         Properties props = new Properties();
-        InputStream in = AuthDBConnection.class.getClassLoader().getResourceAsStream("server.conf");
-        props.load(in);
-        in.close();
+        try {
+            URL path;
+            path = cls.getResource("/server.conf");
+            if (path == null) {
+                log.debug("Failed to cls.getResource(\"/server.conf\")");
+                log.debug("Trying to cls.getClassLoader().getResource(\"/server.conf\")");
+                path = cls.getClassLoader().getResource("/server.conf");
+                if (path == null)
+                    log.debug("Failed to cls.getClassLoader().getResource(\"/server.conf\")");
+            }
+            if (path != null)
+                log.debug(path.getFile());
+            in = cls.getResourceAsStream("/server.conf");
+            props.load(in);
+            log.debug( props.toString() );
+        } catch (IOException e) {
+            reportErrors(e);
+        } finally {
+            try {
+                if( in != null )
+                    in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return props;
     }
 
@@ -94,5 +124,12 @@ class AuthDBConnection {
         ds.setConnectionCachingEnabled(false);
         ds.setConnectionCacheName("CACHE");
         ds.setConnectionCacheProperties(cacheProps);
+    }
+
+    private static void reportErrors(Exception e) {
+        String msg = e.getMessage();
+        log.error(msg);
+        System.err.println(msg);
+        e.printStackTrace();
     }
 }
