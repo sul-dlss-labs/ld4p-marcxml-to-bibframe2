@@ -7,6 +7,8 @@ import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -27,114 +29,110 @@ class MarcToXML {
 
     private static Connection authDB = null;
 
-    public static void main (String [] args) throws NullPointerException, MarcException, IOException, SQLException {
+    private static String marcInputFile = null;
+    private static FileInputStream marcInputFileStream = null;
+    private static MarcReader marcReader = null;
 
-        MarcWriter writer = new MarcXmlWriter(System.out, true);
+    private static String xmlOutputPath = null;
+
+    public static String getXmlOutputPath() {
+        return xmlOutputPath;
+    }
+
+    public static void setXmlOutputPath(String path) {
+        if (path != null)
+            MarcToXML.xmlOutputPath = path;
+        else
+            MarcToXML.xmlOutputPath = System.getenv("LD4P_MARCXML");
+    }
+
+    public static void main (String [] args) throws IOException {
+
+        marcInputFile = args[0];
+        setXmlOutputPath(args[1]);
+
+        marcInputFileStream = new FileInputStream(marcInputFile);
+        marcReader = new MarcStreamReader(marcInputFileStream);
+        while (marcReader.hasNext()) {
+            convertMarcRecord(marcReader.next());
+
+            // TODO: remove this break after testing
+            break; // testing processing for one record
+        }
+    }
+
+    public static void convertMarcRecord (Record record) {
+
+        List fields;
+        List subFieldList;
+        Iterator dataFieldIterator;
+        DataField dataField;
         MarcFactory factory = MarcFactory.newInstance();
 
         try {
-            InputStream input = new FileInputStream(args[0]);
-            MarcReader reader = new MarcStreamReader(input);
-            Record record;
-            List fields;
-            List subFieldList;
-            Iterator dataFieldIterator;
-            DataField dataField;
+            // Ensure the record can be written to an output file
+            // before doing all the work.
+            MarcWriter writer = marcRecordWriter(record);
 
-            while (reader.hasNext()) {
-                record = reader.next();
+            fields = record.getDataFields();
+            dataFieldIterator = fields.iterator();
 
-                fields = record.getDataFields();
-                dataFieldIterator = fields.iterator();
+            while (dataFieldIterator.hasNext()) {
+                dataField = (DataField) dataFieldIterator.next();
 
-                while (dataFieldIterator.hasNext()) {
-                    // TODO: does this need to be cast?
-                    dataField = (DataField) dataFieldIterator.next();
+                subFieldList = dataField.getSubfields();
+                Object [] subFields = subFieldList.toArray(new Object[subFieldList.size()]);
 
-                    subFieldList = dataField.getSubfields();
-                    Object [] subFields = subFieldList.toArray(new Object[subFieldList.size()]);
+                for (int s = 0; s < subFields.length; s++) {
+                    Subfield sf = (Subfield) subFields[s];
+                    char code = sf.getCode();
+                    String codeStr = String.valueOf(code);
+                    String data = sf.getData();
 
-                    for (int s = 0; s < subFields.length; s++) {
-                        // TODO: does this need to be cast?
-                        Subfield sf = (Subfield) subFields[s];
-                        char code = sf.getCode();
-                        String codeStr = String.valueOf(code);
-                        String data = sf.getData();
+                    if (codeStr.equals("=")) {
+                        setAuthConnection();
 
-                        if (codeStr.equals("=")) {
-                            setAuthConnection();
+                        String key = data.substring(2);
+                        String authID = AuthIDfromDB.lookup(key, authDB);
 
-                            String key = data.substring(2);
-                            String authID = AuthIDfromDB.lookup(key, authDB);
-
-                            //TODO consider just getting all the URI's from the authority record here
-                            String[] tagNs = {"920", "921", "922"};
-                            for (String n : tagNs) {
-                                String uri = AuthURIfromDB.lookup(authID, n, authDB);
-                                if (uri.length() > 0)
-                                    dataField.addSubfield(factory.newSubfield('0', uri));
-                            }
-                            dataField.removeSubfield(sf);
+                        //TODO consider just getting all the URI's from the authority record here
+                        String[] tagNs = {"920", "921", "922"};
+                        for (String n : tagNs) {
+                            String uri = AuthURIfromDB.lookup(authID, n, authDB);
+                            if (uri.length() > 0)
+                                dataField.addSubfield(factory.newSubfield('0', uri));
                         }
-                        if (codeStr.equals("?")) {
-                            dataField.removeSubfield(sf);
-                        }
+                        dataField.removeSubfield(sf);
+                    }
+                    if (codeStr.equals("?")) {
+                        dataField.removeSubfield(sf);
                     }
                 }
-                writer.write(record);
-                System.out.flush();
-
-                break; // testing processing for one record
-
             }
+            writer.write(record);
+            writer.close();
         }
-        catch (NullPointerException | MarcException | FileNotFoundException e) {
+        catch (IOException | SQLException | NullPointerException | MarcException e) {
             reportErrors(e);
         }
-        writer.close();
     }
 
-//    private static MarcFactory factory() {
-//        return MarcFactory.newInstance();
-//    }
-//
-//    private static MarcWriter writer() {
-//        return new MarcXmlWriter(System.out, true);
-//    }
-//
-//    private static InputStream input(String marcfile) throws FileNotFoundException {
-//        return new FileInputStream(marcfile);
-//    }
-//
-//    private static MarcReader reader(InputStream input) {
-//        return new MarcStreamReader(input);
-//    }
+    public static String marcRecordFileName(Record record) {
+        String cn = record.getControlNumber();
+        String outFileName = cn.replaceAll(" ", "_").toLowerCase() + ".xml";
+        Path outFilePath = Paths.get(xmlOutputPath, outFileName);
+        return outFilePath.toString();
+    }
+
+    private static MarcWriter marcRecordWriter(Record record) throws FileNotFoundException {
+        OutputStream outFileStream = new FileOutputStream(marcRecordFileName(record));
+        return new MarcXmlWriter(outFileStream, true);
+    }
 
     private static void setAuthConnection() throws IOException, SQLException {
         if ( authDB == null )
             authDB = AuthDBConnection.open();
     }
-
-//    private static Record record(MarcReader reader) {
-//        return reader.next();
-//    }
-//
-//    private static List fields(Record record) {
-//        return record.getDataFields();
-//    }
-
-    private static DataField dataField(Object field) {
-        return (DataField) field;
-    }
-
-//    private static List subFieldList(Object field) {
-//        return dataField(field).getSubfields();
-//    }
-
-//    @SuppressWarnings("unchecked")
-//    private static Object[] subfields(Object field) {
-//        return subFieldList(field).toArray(new Object[subFieldList(field).size()]);
-//    }
 
     private static void reportErrors(Exception e) {
         String msg = e.getMessage();
