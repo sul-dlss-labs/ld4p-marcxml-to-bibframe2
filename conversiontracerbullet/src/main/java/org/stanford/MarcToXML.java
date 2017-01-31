@@ -35,10 +35,6 @@ class MarcToXML {
 
     private static String xmlOutputPath = null;
 
-    public static String getXmlOutputPath() {
-        return xmlOutputPath;
-    }
-
     public static void setXmlOutputPath(String path) {
         if (path != null)
             MarcToXML.xmlOutputPath = path;
@@ -48,6 +44,8 @@ class MarcToXML {
 
     public static void main (String [] args) throws IOException {
 
+        // TODO: Use the Apache Commons-CLI to parse args
+        // https://commons.apache.org/proper/commons-cli/introduction.html
         marcInputFile = args[0];
         setXmlOutputPath(args[1]);
 
@@ -55,77 +53,79 @@ class MarcToXML {
         marcReader = new MarcStreamReader(marcInputFileStream);
         while (marcReader.hasNext()) {
             convertMarcRecord(marcReader.next());
-
-            // TODO: remove this break after testing
-            break; // testing processing for one record
         }
     }
 
     public static void convertMarcRecord (Record record) {
 
-        List fields;
-        List subFieldList;
-        Iterator dataFieldIterator;
-        DataField dataField;
-        MarcFactory factory = MarcFactory.newInstance();
-
         try {
             // Ensure the record can be written to an output file
             // before doing all the work.
-            MarcWriter writer = marcRecordWriter(record);
-
-            fields = record.getDataFields();
-            dataFieldIterator = fields.iterator();
-
-            while (dataFieldIterator.hasNext()) {
-                dataField = (DataField) dataFieldIterator.next();
-
-                subFieldList = dataField.getSubfields();
-                Object [] subFields = subFieldList.toArray(new Object[subFieldList.size()]);
-
-                for (int s = 0; s < subFields.length; s++) {
-                    Subfield sf = (Subfield) subFields[s];
-                    char code = sf.getCode();
-                    String codeStr = String.valueOf(code);
-                    String data = sf.getData();
-
-                    if (codeStr.equals("=")) {
-                        setAuthConnection();
-
-                        String key = data.substring(2);
-                        String authID = AuthIDfromDB.lookup(key, authDB);
-
-                        //TODO consider just getting all the URI's from the authority record here
-                        String[] tagNs = {"920", "921", "922"};
-                        for (String n : tagNs) {
-                            String uri = AuthURIfromDB.lookup(authID, n, authDB);
-                            if (uri.length() > 0)
-                                dataField.addSubfield(factory.newSubfield('0', uri));
-                        }
-                        dataField.removeSubfield(sf);
-                    }
-                    if (codeStr.equals("?")) {
-                        dataField.removeSubfield(sf);
-                    }
-                }
-            }
+            String marcRecordFilePath = marcRecordFilePath(record);
+            MarcWriter writer = marcRecordWriter(marcRecordFilePath);
+            marcResolveAuthorities(record);
             writer.write(record);
             writer.close();
+            System.err.println("Output MARC-XML file: " + marcRecordFilePath);
         }
         catch (IOException | SQLException | NullPointerException | MarcException e) {
             reportErrors(e);
         }
     }
 
-    public static String marcRecordFileName(Record record) {
+    // TODO: move this method to a subclass of Record
+    public static void marcResolveAuthorities(Record record) throws IOException, SQLException {
+        List subFieldList;
+        DataField dataField;
+        MarcFactory factory = MarcFactory.newInstance();
+
+        List fields = record.getDataFields();
+        Iterator dataFieldIterator = fields.iterator();
+
+        while (dataFieldIterator.hasNext()) {
+            dataField = (DataField) dataFieldIterator.next();
+
+            subFieldList = dataField.getSubfields();
+            Object [] subFields = subFieldList.toArray(new Object[subFieldList.size()]);
+
+            for (int s = 0; s < subFields.length; s++) {
+                Subfield sf = (Subfield) subFields[s];
+                char code = sf.getCode();
+                String codeStr = String.valueOf(code);
+                String data = sf.getData();
+
+                if (codeStr.equals("=")) {
+                    setAuthConnection();
+
+                    String key = data.substring(2);
+                    String authID = AuthIDfromDB.lookup(key, authDB);
+
+                    //TODO consider just getting all the URI's from the authority record here
+                    String[] tagNs = {"920", "921", "922"};
+                    for (String n : tagNs) {
+                        String uri = AuthURIfromDB.lookup(authID, n, authDB);
+                        if (uri.length() > 0)
+                            dataField.addSubfield(factory.newSubfield('0', uri));
+                    }
+                    dataField.removeSubfield(sf);
+                }
+                if (codeStr.equals("?")) {
+                    dataField.removeSubfield(sf);
+                }
+            }
+        }
+    }
+
+    // TODO: move this method to a subclass of Record
+    public static String marcRecordFilePath(Record record) {
         String cn = record.getControlNumber();
         String outFileName = cn.replaceAll(" ", "_").toLowerCase() + ".xml";
         Path outFilePath = Paths.get(xmlOutputPath, outFileName);
         return outFilePath.toString();
     }
 
-    private static MarcWriter marcRecordWriter(Record record) throws FileNotFoundException {
-        OutputStream outFileStream = new FileOutputStream(marcRecordFileName(record));
+    private static MarcWriter marcRecordWriter(String filePath) throws FileNotFoundException {
+        OutputStream outFileStream = new FileOutputStream(filePath);
         return new MarcXmlWriter(outFileStream, true);
     }
 

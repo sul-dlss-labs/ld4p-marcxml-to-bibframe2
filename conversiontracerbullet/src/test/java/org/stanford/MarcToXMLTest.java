@@ -68,7 +68,7 @@ public class MarcToXMLTest {
         assertTrue(marcReader.hasNext());
         marcRecord = marcReader.next();
         MarcToXML.convertMarcRecord(marcRecord);
-        String marcXmlFilePath = MarcToXML.marcRecordFileName(marcRecord);
+        String marcXmlFilePath = MarcToXML.marcRecordFilePath(marcRecord);
         File file = new File(marcXmlFilePath);
         assertTrue(file.exists());
         assertTrue(marcXmlValid(marcXmlFilePath));
@@ -83,19 +83,13 @@ public class MarcToXMLTest {
     @Test
     public void marcRecordFileNameTest() {
         marcRecord = marcReader.next();
-        String result = MarcToXML.marcRecordFileName(marcRecord);
+        String result = MarcToXML.marcRecordFilePath(marcRecord);
         assertTrue(result.contains(xmlOutputPath.toString()));
         String cn = marcRecord.getControlNumber();
         assertTrue(result.contains(cn));
         String fmt = ".xml";
         assertTrue(result.contains(fmt));
     }
-
-//    public void debugInspections() {
-//        marcRecord = marcReader.next();
-//        List cFields = marcRecord.getControlFields();
-//        List dFields = marcRecord.getDataFields();
-//    }
 
     private boolean marcXmlValid(String marcXmlFilePath) {
         try {
@@ -121,4 +115,13 @@ public class MarcToXMLTest {
         }
         return marcXmlValidator;
     }
+
+    private void debugInspections() {
+        marcRecord = marcReader.next();
+        List cFields = marcRecord.getControlFields();
+        List dFields = marcRecord.getDataFields();
+        System.err.println(cFields.toString());
+        System.err.println(dFields.toString());
+    }
+
 }
