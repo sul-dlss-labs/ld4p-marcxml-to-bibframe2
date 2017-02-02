@@ -1,6 +1,5 @@
+# vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=sh
 #!/bin/bash
-# process all files in the Marc dir and use Marc4J and SQL to look up authority keys
-# get the 92X URI and put it in the subfield 0 - jkg
 
 # Check dependencies
 if [ "$LD4P_MARC" == "" ]; then
@@ -8,26 +7,42 @@ if [ "$LD4P_MARC" == "" ]; then
     source ${SCRIPT_PATH}/ld4p_configure.sh
 fi
 
-stamp=`date "+%Y%m%d%H%s"`
-MRC_FILE="${LD4P_DATA}/marc.${stamp}"
-XML_FILE="${LD4P_MARCXML}/stf.${stamp}.xml"
+# Bash function to convert one MARC file to XML files for each record.
+# Depends on the environment variables defined in ld4p_configure.sh
+# Depends on installation of the ld4p-tracer-bullets java library.
+# Requires one input parameter - the path to a MARC21 binary file.
+generate_marcxml_with_auth_uris () {
 
-# Gather all the dumped marc records and make 1 temp file, then clean up.
-echo "Searching for MARC files: ${LD4P_MARC}"
-for F_MRC in `find ${LD4P_MARC} -type f`
-do
-  cat $F_MRC >> ${MRC_FILE}
-  mv $F_MRC ${LD4P_DATA}/Archive/Marc/
-done
+    MRC_FILE=$1
 
-# $MRC_FILE is assumed to be one large file of marc records
-if [ -f ${MRC_FILE} ]; then
-    java -cp ${LD4P_JAR} org.stanford.MarcToXML ${MRC_FILE} > ${XML_FILE} 2>> ${LD4P_LOGS}/errors
-    conversion_success=$?
-    rm ${MRC_FILE}  # always cleanup the concatenation of all the marc files
-    if [ ${conversion_success} != 0 ]; then
-        echo "ERROR: Conversion failed" && cat ${LD4P_LOGS}/errors && exit 1
+    stamp=$(date --iso-8601)
+    filename=$(basename ${MRC_FILE} .mrc)
+    LOG_FILE="${LD4P_LOGS}/${filename}_MarcToXML_${stamp}.log"
+
+    echo
+    echo "Converting MARC file:  ${MRC_FILE}"
+    echo "Output MARC-XML files: ${LD4P_MARCXML}/*.xml"
+    echo "Logging conversion to: ${LOG_FILE}"
+
+    options="-i ${MRC_FILE} -o ${LD4P_MARCXML} -l ${LOG_FILE}"
+    [ -n "${LD4P_MARCXML_REPLACE}" ] && options="${options} -r"
+
+    # Process all records in the MRC_FILE using marc4j and SQL to
+    # look up authority keys and retrieve any URI values from
+    # 92X fields and put them in the subfield 0 so that the 
+    # LOC converter (for Bibframe v1) can use them correctly.
+    java -cp ${LD4P_JAR} org.stanford.MarcToXML ${options}
+
+    SUCCESS=$?
+    if [ ${SUCCESS} ]; then
+	echo "Completed conversion."
+	echo "Moving MARC file to archive: ${LD4P_DATA}/Archive/Marc/"
+	mv $MRC_FILE ${LD4P_DATA}/Archive/Marc/
+    else
+	echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${LD4P_LOGS}/errors
     fi
-else
-    echo "WARNING: MARC files are missing" | tee --append ${LD4P_LOGS}/errors
-fi
+    echo
+
+    return $SUCCESS
+}
+
