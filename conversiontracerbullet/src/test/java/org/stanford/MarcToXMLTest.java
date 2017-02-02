@@ -2,13 +2,14 @@ package org.stanford;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
+
+import static java.nio.file.Files.createTempDirectory;
 import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -28,35 +29,38 @@ import javax.xml.validation.Validator;
  */
 public class MarcToXMLTest {
 
+    private static String logFile;
+    private static Path outputPath;
+
     // For additional test data, consider the marc4j data at
     // https://github.com/marc4j/marc4j/tree/master/test/resources
-
-//    private String marcFileResource = "/sample_marc.mrc";
-    private String marcFileResource = "/one_record.mrc";
-
+    //private String marcFileResource = "/sample_marc.mrc";
+    private final String marcFileResource = "/one_record.mrc";
     // MARC21 XML schema
     // https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd
-    private String marcSchemaResource = "/MARC21slim.xsd";
+    private final String marcSchemaResource = "/MARC21slim.xsd";
 
     private MarcStreamReader marcReader = null;
     private Record marcRecord = null;
-    private Path xmlOutputPath = null;
 
     @Before
     public void setUp() throws IOException {
+        outputPath = createTempDirectory("MarcToXMLTest_");
+        logFile = File.createTempFile("MarcToXMLTest_", ".log", outputPath.toFile()).toString();
+        MarcToXML.setLogger(logFile);
+        MarcToXML.setXmlOutputPath(outputPath.toString());
+        // Read a MARC binary file resource
         String marcFilePath = getClass().getResource(marcFileResource).getFile();
         marcReader = new MarcStreamReader(new FileInputStream(marcFilePath));
         assertTrue(marcReader.hasNext());
-        xmlOutputPath = Files.createTempDirectory("MarcToXMLTest");
-        MarcToXML.setXmlOutputPath(xmlOutputPath.toString());
     }
 
     @After
     public void tearDown() throws IOException {
-        FileUtils.deleteDirectory(xmlOutputPath.toFile());
+        FileUtils.deleteDirectory(outputPath.toFile());
     }
 
-    @Ignore("This does not yet test anything in MarcToXML")
+    @Ignore("This does not yet test anything in MarcToXML\n")
     @Test
     public void main() throws Exception {
         // TODO: this can simply confirm that a MARC file is read
@@ -68,7 +72,7 @@ public class MarcToXMLTest {
         assertTrue(marcReader.hasNext());
         marcRecord = marcReader.next();
         MarcToXML.convertMarcRecord(marcRecord);
-        String marcXmlFilePath = MarcToXML.marcRecordFilePath(marcRecord);
+        String marcXmlFilePath = MarcToXML.xmlOutputFilePath(marcRecord);
         File file = new File(marcXmlFilePath);
         assertTrue(file.exists());
         assertTrue(marcXmlValid(marcXmlFilePath));
@@ -83,8 +87,8 @@ public class MarcToXMLTest {
     @Test
     public void marcRecordFileNameTest() {
         marcRecord = marcReader.next();
-        String result = MarcToXML.marcRecordFilePath(marcRecord);
-        assertTrue(result.contains(xmlOutputPath.toString()));
+        String result = MarcToXML.xmlOutputFilePath(marcRecord);
+        assertTrue(result.contains(outputPath.toString()));
         String cn = marcRecord.getControlNumber();
         assertTrue(result.contains(cn));
         String fmt = ".xml";
