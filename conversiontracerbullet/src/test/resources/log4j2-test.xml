@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    For simple information about log4j configuration, see:
+    https://www.tutorialspoint.com/log4j/log4j_configuration.htm
+    There are some differences for log4j-2, see:
+    https://logging.apache.org/log4j/2.x/manual/configuration.html
+    https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties
+    https://logging.apache.org/log4j/2.x/manual/configuration.html#UnitTestingInMaven
+
+    This configuration file is a simple console logger.  There is code in
+    MarcToXML that defines a file logger when given a log file on the command line.
+    See MarcToXML#setLogger() and MarcToXML#addLogFileAppender(String filename).
+    There is code in MarcToXMLTest#setup() to define a file logger during unit tests.
+-->
+<Configuration strict="true" >
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</pattern>
+            </PatternLayout>
+        </Appender>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>
