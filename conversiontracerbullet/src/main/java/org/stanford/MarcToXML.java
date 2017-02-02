@@ -1,5 +1,19 @@
 package org.stanford;
 
+import org.apache.commons.cli.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.config.AppenderRef;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+
 import org.marc4j.*;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
@@ -13,8 +27,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Uses the Marc4J library to transform the MARC record to MarcXML.
@@ -25,13 +37,33 @@ import org.apache.logging.log4j.LogManager;
  */
 class MarcToXML {
 
-    private static Logger log = LogManager.getLogger(MarcToXML.class.getName());
-
     private static Connection authDB = null;
 
+    // Apache Commons-CLI Options
+    // https://commons.apache.org/proper/commons-cli/introduction.html
+    private static CommandLine cmd = null;
+    private static Options options = new Options();
+
+    private static void printHelp() {
+        if (! cmd.hasOption('h'))
+            return;
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(MarcToXML.class.getName(), options);
+        System.exit(0);
+    }
+
     private static String marcInputFile = null;
-    private static FileInputStream marcInputFileStream = null;
-    private static MarcReader marcReader = null;
+
+    public static void setMarcInputFile(String file) {
+        if (file != null) {
+            MarcToXML.marcInputFile = file;
+        } else {
+            System.err.println("ERROR: No MARC input file specified.");
+            printHelp();
+        }
+    }
+
+    private static Boolean xmlReplace = false;
 
     private static String xmlOutputPath = null;
 
@@ -42,31 +74,104 @@ class MarcToXML {
             MarcToXML.xmlOutputPath = System.getenv("LD4P_MARCXML");
     }
 
-    public static void main (String [] args) throws IOException {
+    private static Logger log = null;
 
-        // TODO: Use the Apache Commons-CLI to parse args
-        // https://commons.apache.org/proper/commons-cli/introduction.html
-        marcInputFile = args[0];
-        setXmlOutputPath(args[1]);
+    private static String logFileDefault = "log/MarcToXML.log";
 
-        marcInputFileStream = new FileInputStream(marcInputFile);
-        marcReader = new MarcStreamReader(marcInputFileStream);
+    public static void setLogger(String logFile) {
+        // See src/main/resources/log4j2.xml for configuration details.
+        // This method uses a programmatic approach to add a file logger.
+        if (logFile == null)
+            logFile = logFileDefault;
+        addLogFileAppender(logFile);
+        log = LogManager.getLogger();
+//        log.trace("Here is some TRACE");
+//        log.debug("Here is some DEBUG");
+//        log.info("Here is some INFO");
+//        log.warn("Here is some WARN");
+//        log.error("Here is some ERROR");
+//        log.fatal("Here is some FATAL");
+    }
+
+    private static void addLogFileAppender(String filename) {
+        String loggerName = MarcToXML.class.getName();
+        String fileAppenderName = "LOGFile";
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Configuration config = context.getConfiguration();
+        PatternLayout layout = PatternLayout.newBuilder()
+                .withConfiguration(config)
+                .withPattern("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n")
+                .build();
+        FileAppender appender = FileAppender.newBuilder()
+                .withFileName(filename)
+                .withName(fileAppenderName)
+                .withLayout(layout)
+                .build();
+        appender.start();
+        config.addAppender(appender);
+
+        AppenderRef ref = AppenderRef.createAppenderRef(fileAppenderName, null, null);
+        AppenderRef[] appenderRefs = new AppenderRef[] {ref};
+
+        Boolean loggerAdd = false;
+        Filter loggerFilter = null;
+        Level loggerLevel = Level.INFO;
+        Property[] loggerProperties = null;
+        LoggerConfig loggerConfig = LoggerConfig.createLogger(
+                loggerAdd,
+                loggerLevel,
+                loggerName,
+                "true",
+                appenderRefs,
+                loggerProperties,
+                config,
+                loggerFilter);
+
+        loggerConfig.addAppender(appender, loggerLevel, loggerFilter);
+        config.removeLogger(loggerName);
+        config.addLogger(loggerName, loggerConfig);
+        context.updateLoggers();
+    }
+
+    public static void main (String [] args) throws IOException, ParseException {
+
+        options.addOption("h", "help", false, "help message");
+        options.addOption("i", "inputFile", true, "MARC input file (binary .mrc file expected; required)");
+        options.addOption("o", "outputPath", true, "MARC XML output path (default: ENV[\"LD4P_MARCXML\"])");
+        options.addOption("l", "logFile", true, "Log file output (default: " + logFileDefault + ")");
+        options.addOption("r", "replace", false, "Replace existing XML files (default: false)");
+
+        CommandLineParser parser = new DefaultParser();
+        cmd = parser.parse(options, args);
+        printHelp();
+        setMarcInputFile( cmd.getOptionValue("i") );
+        setXmlOutputPath( cmd.getOptionValue("o") );
+        // TODO: check what happens when long options are used instead of short options?
+        // TODO: might need to check for the presence of each of them to get the value?
+        setLogger( cmd.getOptionValue("l") );
+        xmlReplace = cmd.hasOption("r");
+
+        FileInputStream marcInputFileStream = new FileInputStream(marcInputFile);
+        MarcReader marcReader = new MarcStreamReader(marcInputFileStream);
         while (marcReader.hasNext()) {
-            convertMarcRecord(marcReader.next());
+            convertMarcRecord( marcReader.next() );
         }
     }
 
     public static void convertMarcRecord (Record record) {
-
         try {
-            // Ensure the record can be written to an output file
-            // before doing all the work.
-            String marcRecordFilePath = marcRecordFilePath(record);
-            MarcWriter writer = marcRecordWriter(marcRecordFilePath);
-            marcResolveAuthorities(record);
-            writer.write(record);
-            writer.close();
-            System.err.println("Output MARC-XML file: " + marcRecordFilePath);
+            String xmlFilePath = xmlOutputFilePath(record);
+            File xmlFile = new File(xmlFilePath);
+            Boolean doConversion = (! xmlFile.exists()) || xmlReplace;
+            if (doConversion) {
+                MarcWriter writer = marcRecordWriter(xmlFilePath);
+                marcResolveAuthorities(record);
+                writer.write(record);
+                writer.close();
+                log.info("Output MARC-XML file: " + xmlFilePath);
+            } else {
+                log.info("Skipped MARC-XML file: " + xmlFilePath);
+            }
         }
         catch (IOException | SQLException | NullPointerException | MarcException e) {
             reportErrors(e);
@@ -117,7 +222,7 @@ class MarcToXML {
     }
 
     // TODO: move this method to a subclass of Record
-    public static String marcRecordFilePath(Record record) {
+    public static String xmlOutputFilePath(Record record) {
         String cn = record.getControlNumber();
         String outFileName = cn.replaceAll(" ", "_").toLowerCase() + ".xml";
         Path outFilePath = Paths.get(xmlOutputPath, outFileName);
