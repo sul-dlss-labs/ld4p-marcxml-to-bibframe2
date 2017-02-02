@@ -132,8 +132,17 @@ mvn package
 The packaged JAR includes all dependencies, so it should work outside of this project.  The
 packaged JAR can be copied to a convenient location and used on the CLASSPATH or the command line, e.g.
 ```
-cp conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar ~/lib/ld4p_conversion.jar
-java -cp ~/lib/ld4p_conversion.jar org.stanford.MarcToXML ./files/marc_file.mrc ./files/mark_file.xml
+$ cp conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar ~/lib/ld4p_conversion.jar
+$ LD4P_JAR=~/lib/ld4p_conversion.jar
+$ java -cp ${LD4P_JAR} org.stanford.MarcToXML -h
+usage: org.stanford.MarcToXML
+ -h,--help               help message
+ -i,--inputFile <arg>    MARC input file (binary .mrc file expected;
+                         required)
+ -l,--logFile <arg>      Log file output (default: log/MarcToXML.log)
+ -o,--outputPath <arg>   MARC XML output path (default:
+                         ENV["LD4P_MARCXML"])
+ -r,--replace            Replace existing XML files (default: false)
 ```
 
 
