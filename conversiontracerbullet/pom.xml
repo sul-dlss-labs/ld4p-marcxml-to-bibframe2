@@ -125,22 +125,18 @@
             <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
+        <!--https://github.com/powermock/powermock/wiki/Mockito_maven-->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--2017-02: pulls in org.mockito:mockito-core:jar:1.10.19:test-->
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
+            <artifactId>powermock-api-mockito</artifactId>
             <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>3.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
