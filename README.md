@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/sul-dlss/ld4p-tracer-bullets.svg?branch=master)](https://travis-ci.org/sul-dlss/ld4p-tracer-bullets)
 [![Coverage Status](https://coveralls.io/repos/github/sul-dlss/ld4p-tracer-bullets/badge.svg?branch=master)](https://coveralls.io/github/sul-dlss/ld4p-tracer-bullets?branch=master)
+[![Stories in Ready](https://badge.waffle.io/sul-dlss/ld4p-tracer-bullets.png?label=ready&title=Ready)](http://waffle.io/sul-dlss/ld4p-tracer-bullets)
+
 #LD4P Tracer Bullets
 
 ## Background
