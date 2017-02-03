@@ -10,6 +10,7 @@
     This configuration file is a simple console logger.  There is code in
     MarcToXML that defines a file logger when given a log file on the command line.
     See MarcToXML#setLogger() and MarcToXML#addLogFileAppender(String filename).
+    There is code in MarcToXMLTest#setup() to define a file logger during unit tests.
 -->
 <Configuration strict="true" >
     <Appenders>
