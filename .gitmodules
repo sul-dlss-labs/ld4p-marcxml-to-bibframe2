@@ -1,0 +1,3 @@
+[submodule "ld4p_tracer_bullets"]
+	path = ld4p_tracer_bullets
+	url = https://github.com/sul-dlss/ld4p-tracer-bullets.git
