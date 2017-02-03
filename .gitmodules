@@ -1,3 +1,8 @@
 [submodule "loc_marc2bibframe"]
 	path = loc_marc2bibframe
 	url = https://github.com/lcnetdev/marc2bibframe.git
+
+[submodule "ld4p_tracer_bullets"]
+	path = ld4p_tracer_bullets
+	url = https://github.com/sul-dlss/ld4p-tracer-bullets.git
+  
