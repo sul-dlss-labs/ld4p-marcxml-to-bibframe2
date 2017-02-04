@@ -38,30 +38,35 @@ else
     echo "LD4P_RDF path:   $LD4P_RDF"
 fi
 
-export LD4P_BIN=${LD4P_SIRSI}/bin
+export LD4P_BIN="${LD4P_SIRSI}/bin"
 mkdir -p ${LD4P_BIN} || kill -INT $$
 
 # Java libraries should be installed or deployed from https://github.com/sul-dlss/ld4p-tracer-bullets
 # Check the deployment recipes in that project for details.
-export LD4P_JAR=${LD4P_BIN}/ld4p_converter.jar
+export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
 if [ ! -f "${LD4P_JAR}" ]; then
    echo "ERROR: The LD4P scripts require a java library: ${LD4P_JAR}" 1>&2
    echo "See https://github.com/sul-dlss/ld4p-tracer-bullets for details" 1>&2
    kill -INT $$
 fi
 
-export LD4P_DATA=${LD4P_SIRSI}/Dataload/LD4P
-export LD4P_MARC=${LD4P_DATA}/Marc
-export LD4P_MARCXML=${LD4P_DATA}/MarcXML
-export LD4P_MARCRDF=${LD4P_RDF}/MarcRDF
-export LD4P_LOGS=${LD4P_DATA}/log
+export LD4P_DATA="${LD4P_SIRSI}/Dataload/LD4P"
+export LD4P_MARC="${LD4P_DATA}/Marc"
+export LD4P_MARCXML="${LD4P_DATA}/MarcXML"
+export LD4P_MARCRDF="${LD4P_RDF}/MarcRDF"
+export LD4P_LOGS="${LD4P_DATA}/log"
+
+export LD4P_ARCHIVE_MARC="${LD4P_DATA}/Archive/Marc"
+export LD4P_ARCHIVE_MARCXML="${LD4P_DATA}/Archive/MarcXML"
+export LD4P_ARCHIVE_MARCRDF="${LD4P_DATA}/Archive/MarcRDF"
 
 mkdir -p ${LD4P_DATA} || kill -INT $$
 mkdir -p ${LD4P_MARC} || kill -INT $$
 mkdir -p ${LD4P_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_MARCRDF} || kill -INT $$
-mkdir -p ${LD4P_DATA}/Archive/Marc || kill -INT $$
-mkdir -p ${LD4P_DATA}/Archive/MarcXML || kill -INT $$
+mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
+mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
+mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
 
 # Function wrapper to run a MARC to Bibframe converter, given an input and output file.
