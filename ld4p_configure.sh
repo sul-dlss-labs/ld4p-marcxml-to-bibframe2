@@ -8,6 +8,8 @@
 # system ENV or on the command line, like so:
 # LD4P_SIRSI=/ld4p_data LD4P_RDF=/ld4p_rdf source /path/to/ld4p_configure.sh
 
+SCRIPT_PATH=$(dirname $0)
+
 export LD4P_BASEURI="http://linked-data-test.stanford.edu/library/"
 
 # If the system already defines an LD4P_SIRSI path, it will be used.
@@ -41,20 +43,12 @@ fi
 export LD4P_BIN="${LD4P_SIRSI}/bin"
 mkdir -p ${LD4P_BIN} || kill -INT $$
 
-# Java libraries should be installed or deployed from https://github.com/sul-dlss/ld4p-tracer-bullets
-# Check the deployment recipes in that project for details.
-export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
-if [ ! -f "${LD4P_JAR}" ]; then
-   echo "ERROR: The LD4P scripts require a java library: ${LD4P_JAR}" 1>&2
-   echo "See https://github.com/sul-dlss/ld4p-tracer-bullets for details" 1>&2
-   kill -INT $$
-fi
-
 export LD4P_DATA="${LD4P_SIRSI}/Dataload/LD4P"
 export LD4P_MARC="${LD4P_DATA}/Marc"
 export LD4P_MARCXML="${LD4P_DATA}/MarcXML"
 export LD4P_MARCRDF="${LD4P_RDF}/MarcRDF"
 export LD4P_LOGS="${LD4P_DATA}/log"
+export LD4P_CONFIGS="${LD4P_SIRSI}/configs"
 
 export LD4P_ARCHIVE_MARC="${LD4P_DATA}/Archive/Marc"
 export LD4P_ARCHIVE_MARCXML="${LD4P_DATA}/Archive/MarcXML"
@@ -68,18 +62,12 @@ mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
+mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
-# Function wrapper to run a MARC to Bibframe converter, given an input and output file.
-# Usage:  ld4p_marc2bibframe {input_file} {output_file}
-ld4p_marc2bibframe () {
-    input_file=$1
-    output_file=$2
-    m2b_xquery=${LD4P_BIN}/Marc2Bibframe/marc2bibframe/xbin/saxon.xqy
-    /usr/bin/java -cp ${LD4P_JAR} net.sf.saxon.Query ${m2b_xquery} \
-                  baseuri=${LD4P_BASEURI} \
-                  serialization="rdfxml" \
-                  marcxmluri=${input_file} \
-                  1> ${output_file} \
-                  2>> ${LD4P_LOGS}/errors
-}
+# Check and install required libraries
+source ${SCRIPT_PATH}/ld4p_install_libraries.sh
+
+# Source bash functions to run converters
+source ${SCRIPT_PATH}/generate_marcxml_with_auth_uris.sh
+source ${SCRIPT_PATH}/loc_marc2bibframe.sh
 

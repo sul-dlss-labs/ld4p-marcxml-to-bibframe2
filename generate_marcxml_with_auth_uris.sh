@@ -35,14 +35,13 @@ generate_marcxml_with_auth_uris () {
 
     SUCCESS=$?
     if [ ${SUCCESS} ]; then
-	echo "Completed conversion."
-	echo "Moving MARC file to archive: ${LD4P_DATA}/Archive/Marc/"
-	mv $MRC_FILE ${LD4P_DATA}/Archive/Marc/
+        echo "Completed conversion."
+        echo "Moving MARC file to archive: ${LD4P_ARCHIVE_MARC}/"
+        mv ${MRC_FILE} ${LD4P_ARCHIVE_MARC}/
     else
-	echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${LD4P_LOGS}/errors
+        echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${LD4P_LOGS}/errors
     fi
-    echo
 
-    return $SUCCESS
+    return ${SUCCESS}
 }
 
