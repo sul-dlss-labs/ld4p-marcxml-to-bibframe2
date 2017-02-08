@@ -1,11 +1,15 @@
 # ld4p-tracer-bullet-scripts
 
-Symphony scripts to select and export catalog records.  Conversion
-scripts that use and run the [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
+Symphony scripts to select and export catalog records. 
+ - Symphony scripts select catalog keys for MARC records to be
+   converted. These records are dumped into .mrc files in an NFS
+   directory, which has a shared mount point on both the Symphony
+   system and an ld4p-conversion system.
 
-These scripts will select the catalog keys for MARC records to be converted.
-These records are dumped into .mrc files in an NFS directory, which has a shared
-mount point on both the Symphony system and an ld4p-conversion system.
+Conversion scripts that use and run conversion utilities, including:
+ - [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
+ - [LOC marc2bibframe](https://github.com/lcnetdev/marc2bibframe.git)
+
 
 There could be a cron job that runs and generates MARC record dumps as
 new records for conversion become available. Another cron job on an
@@ -13,15 +17,78 @@ new records for conversion become available. Another cron job on an
 through a conversion pipeline.
 
 
+### General Dependencies
+
+- Java 8
+- Maven 3
+- Converter utilities installed on the Java classpath
+    - The `ld4p_install_*.sh` scripts should take care of dependencies
+    - [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
+    - [LOC marc2bibframe](https://github.com/lcnetdev/marc2bibframe.git)
+- File system configuration details
+    - See how `ld4p_configure.sh` sets various input/output paths
+
+The conversion scripts currently work with file systems.  There is also an authority
+record lookup option that requires access to a Symphony/Oracle database.  Some of these
+configuration details are in a SUL-DLSS private configuration repository.
+
+
+## Getting Started: Installation and Configuration
+
+```sh
+git clone https://github.com/sul-dlss/ld4p-tracer-bullet-scripts.git
+cd ld4p-tracer-bullet-scripts
+# populate code from external projects (only required once)
+git submodule update --init --recursive
+```
+
+Review and modify `ld4p_configure.sh` as required to configure
+system paths for data files (see details in that script).
+Then install the dependencies (only required once):
+```
+source ./ld4p_configure.sh
+source ./ld4p_install_libraries.sh
+```
+
+#### Updating Dependencies
+
+Some dependencies for these scripts are git submodules in this project.
+If there are updates to these external projects, they can be
+managed using `git submodule` features. If any submodules are updated,
+this project should be redeployed. For example, to update all
+submodules to the latest master for the remote, e.g.:
+```
+cd ld4p-tracer-bullet-scripts # a clone of this project
+git submodule foreach git pull origin master
+```
+
+#### Configuration
+
+The details are in `ld4p_configure.sh`
+    - that file is more authoritative than this README
+
+In brief, there are two data paths that must be set and the
+rest of the configuration can be done automatically (using
+assumptions derived from an existing system).
+    - A Symphony root path
+    - An RDF root path
+
+For example, the effective defaults are:
+    ```
+    export LD4P_SIRSI=/symphony
+    export LD4P_RDF=/rdf
+    source ./ld4p_configure.sh
+    ```
+
 ## Symphony Scripts
 
 ### Dependencies
 
-- A SIRSI configuration in `/s/SUL/Config/sirsi.env`
+- A SIRSI configuration (e.g. `/s/SUL/Config/sirsi.env`)
 - Symphony scripts available on the $PATH:
   - `selcatalog`
   - `catalogdump`
-- data is available in `/s/SUL/Dataload/LD4P`
+- `ld4p_configure.sh` sets various input/output paths
 
 ### Scripts
 
@@ -30,46 +97,46 @@ through a conversion pipeline.
   - runs Symphony `selcatalog` to output catalog keys
 
 - `generate_marc.sh`
-  - requires catalog keys from `ckey_sel_for_convert.sh`
-  - runs Symphony `catalogdump` to output MARC data
-    - uses options to output required fields
-  - data input:  `/s/SUL/Dataload/LD4P`
-  - data output: `/s/SUL/Dataload/LD4P/Marc/*.mrc`
-  - errors logs: `/s/SUL/Dataload/LD4P/log/errors`
-  - moves processed catalog keys to `/s/SUL/Dataload/LD4P/Archive/Ckeys`
-
+    - requires catalog keys from `ckey_sel_for_convert.sh`
+    - runs Symphony `catalogdump` to output MARC data
+        - uses options to output required fields
+    - `ld4p_configure.sh` sets various input/output paths, e.g. 
+        - data input path configuration (e.g. `/s/SUL/Dataload/LD4P`)
+        - data output path configuration (e.g. `/s/SUL/Dataload/LD4P/Marc/*.mrc`)
+        - error log path configuration (e.g. `/s/SUL/Dataload/LD4P/log/errors`)
+        - archived catalog keys path (e.g. `/s/SUL/Dataload/LD4P/Archive/Ckeys`)
 
 ## Conversion Scripts
 
-### Dependencies
-
-- Java 8
-- Converter utilities installed on the Java classpath
-  - see [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
-- data available in `/s/SUL/Dataload/LD4P`
-
-### Scripts
-
-- `generate_marcxml_with_auth_uris.sh`
-  - calls java utility: `MarcToXMLsf0`
+- `run_marc_bin2xml_conversion.sh`
+  - sources function defined by `generate_marcxml_with_auth_uris.sh`
+  - depends on java utility: `MarcToXML`
     - process MARC files and use Marc4J and SQL to look up authority keys
     - get the 92X URI and put it in subfield 0
-  - data input:  `/s/SUL/Dataload/LD4P`
-  - data output: `/s/SUL/Dataload/LD4P/Marcxml`
-  - error logs:  `/s/SUL/Dataload/LD4P/log/errors`
-  - moves processed MARC files to `/s/SUL/Dataload/LD4P/Archive/Marc/`
+  - I/O paths define by `ld4p_configure.sh`:
+    - data input:      `$LD4P_MARC`
+    - data output:     `$LD4P_MARCXML`
+    - error logs:      `$LD4P_LOG`
+    - processed files: `$LD4P_ARCHIVE_MARC`
 
-- `marcxml2bibframe.sh`
-  - run a converter to convert MARC-XML to RDF
-  - data input:  `/s/SUL/Dataload/LD4P/Marcxml`
-  - data output: `/s/SUL/Dataload/LD4P/RDF`
-  - error logs:  `/s/SUL/Dataload/LD4P/log/errors`
-  - moves processed MARC-XML files to `/s/SUL/Dataload/LD4P/Archive/Marcxml/`
-  - LOC converter uses XSLT XQuery
+- `run_marc_xml2rdf_conversion.sh`
+  - convert MARC-XML to RDF (Bibframe)
+  - sources function defined by `loc_marc2bibframe.sh`
+    - LOC converter uses XSLT XQuery
     - requires Saxon on the java classpath
-    - available from `/s/SUL/Bin/Marc2Bibframe/marc2bibframe`
-    - args:
-      - `marcxmluri=/path/to/marc/xml/file`
-      - `baseuri=http://my-base-uri/`
-      - `serialization=rdfxml`
+    - A "BASE_URI" is define by `ld4p_configure.sh`
+  - I/O paths define by `ld4p_configure.sh`:
+    - data input:      `$LD4P_MARCXML`
+    - data output:     `$LD4P_MARCRDF`
+    - error logs:      `$LD4P_LOG`
+    - processed files: `$LD4P_ARCHIVE_MARCXML`
+    
+#### Development Conversions
 
+Examples of running conversions on a development laptop are in the
+`laptop_*.sh` scripts.  In short, create two file system paths
+for MARC and RDF data and set those paths in `laptop_configure.sh`;
+the rest of the configuration should be automatic.  Once the
+`ld4p_install_libraries.sh` works, it should be possible to
+run the conversions using the `laptop_reset_and_run*.sh` scripts.
+Similar wrapper-scripts can be created to run conversions on any system.
