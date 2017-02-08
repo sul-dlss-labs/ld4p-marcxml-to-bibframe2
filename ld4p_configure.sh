@@ -64,9 +64,6 @@ mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
 mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
-# Check and install required libraries
-source ${SCRIPT_PATH}/ld4p_install_libraries.sh
-
 # Source bash functions to run converters
 source ${SCRIPT_PATH}/generate_marcxml_with_auth_uris.sh
 source ${SCRIPT_PATH}/loc_marc2bibframe.sh
