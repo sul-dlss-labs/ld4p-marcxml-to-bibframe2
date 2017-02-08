@@ -1,13 +1,6 @@
 # vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=sh
 #!/bin/bash
 
-SCRIPT_PATH=$(dirname $0)
-
-# Check dependencies
-if [ "$LOC_M2B_XQUERY" == "" ]; then
-    source ${SCRIPT_PATH}/ld4p_configure.sh
-fi
-
 # Bash function to convert one MARC-XML file to a Bibframe RDF file.
 # Depends on the environment variables defined in ld4p_configure.sh
 # Depends on installation of the loc marc2bibframe project.
