@@ -27,7 +27,15 @@ loc_marc2bibframe () {
 
     stamp=$(date --iso-8601=sec)
 
-    if [[ "${LD4P_MARCRDF_REPLACE}" == "" && -s "${MRC_RDF}" ]]; then
+    run=false
+    if [ "${LD4P_MARCRDF_REPLACE}" != "" ]; then
+        # Replace any existing RDF
+        run=true
+    elsif [ "${MRC_XML}" -nt "${MRC_RDF}" ]; then
+        # True if MRC_XML exists and MRC_RDF does not, or
+        # True if MRC_XML has been changed more recently than MRC_RDF.
+        run=true
+    else
         echo "${stamp}  SKIPPED   MARC-RDF file: ${MRC_RDF}" >> ${LOG_FILE}
         return 0
     fi
