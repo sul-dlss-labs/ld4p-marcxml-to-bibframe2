@@ -38,27 +38,42 @@ else
     echo "LD4P_RDF path:   $LD4P_RDF"
 fi
 
+# Paths for code, configs and logs
 export LD4P_BIN="${LD4P_SIRSI}/bin"
+export LD4P_LOGS="${LD4P_SIRSI}/log"
+export LD4P_CONFIGS="${LD4P_SIRSI}/configs"
+# Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_BIN} || kill -INT $$
+mkdir -p ${LD4P_LOGS} || kill -INT $$
+mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
+# Paths for data records
 export LD4P_DATA="${LD4P_SIRSI}/Dataload/LD4P"
 export LD4P_MARC="${LD4P_DATA}/Marc"
 export LD4P_MARCXML="${LD4P_DATA}/MarcXML"
 export LD4P_MARCRDF="${LD4P_RDF}/MarcRDF"
-export LD4P_LOGS="${LD4P_DATA}/log"
-export LD4P_CONFIGS="${LD4P_SIRSI}/configs"
-
-export LD4P_ARCHIVE_MARC="${LD4P_DATA}/Archive/Marc"
-export LD4P_ARCHIVE_MARCXML="${LD4P_DATA}/Archive/MarcXML"
-export LD4P_ARCHIVE_MARCRDF="${LD4P_DATA}/Archive/MarcRDF"
-
+# Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_DATA} || kill -INT $$
 mkdir -p ${LD4P_MARC} || kill -INT $$
 mkdir -p ${LD4P_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_MARCRDF} || kill -INT $$
+
+# Paths to archive processed records
+export LD4P_ARCHIVE_MARC="${LD4P_DATA}/Archive/Marc"
+export LD4P_ARCHIVE_MARCXML="${LD4P_DATA}/Archive/MarcXML"
+export LD4P_ARCHIVE_MARCRDF="${LD4P_DATA}/Archive/MarcRDF"
+# Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
-mkdir -p ${LD4P_LOGS} || kill -INT $$
-mkdir -p ${LD4P_CONFIGS} || kill -INT $$
+
+# Record processing options (toggles):
+# Toggle to archive processed records
+export LD4P_ARCHIVE_ENABLED=true
+# Toggle to replace existing MARC-XML files; note that when MARC binary files
+# have a timestamp later than a MARC-XML file, the XML file will be replaced.
+export LD4P_MARCXML_REPLACE=false
+# Toggle to replace existing MARC-RDF files; note that when MARC-XML files
+# have a timestamp later than a MARC-RDF file, the RDF file will be replaced.
+export LD4P_MARCRDF_REPLACE=false
 

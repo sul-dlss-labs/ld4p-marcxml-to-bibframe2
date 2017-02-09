@@ -45,9 +45,13 @@ loc_marc2bibframe () {
 
         SUCCESS=$?
         if [ ${SUCCESS} ]; then
-            mv ${MRC_XML} ${LD4P_ARCHIVE_MARCXML}
+            if [ ${LD4P_ARCHIVE_ENABLED} ]; then
+                # Archive the MRC_XML file (preserve timestamps etc.)
+                rsync -a --update "${MRC_XML}" "${LD4P_ARCHIVE_MARCXML}/"
+                rm ${MRC_XML}
+            fi
         else
-            msg="${stamp}  FAILURE   MARC-RDF file: ${MRC_RDF}"
+            msg="${stamp}  FAILED    MARC-RDF file: ${MRC_RDF}"
         fi
 
     else
