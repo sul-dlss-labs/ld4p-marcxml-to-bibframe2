@@ -67,3 +67,6 @@ mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 
+# Toggle to archive processed records
+export LD4P_ARCHIVE_ENABLED=true
+
