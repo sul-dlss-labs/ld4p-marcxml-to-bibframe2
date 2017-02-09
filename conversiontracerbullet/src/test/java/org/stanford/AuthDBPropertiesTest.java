@@ -3,6 +3,7 @@ package org.stanford;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -125,6 +126,29 @@ public class AuthDBPropertiesTest {
     public void testFailureLoadingProperties() throws IOException {
         String customConfigFile = Paths.get(tmpDir.toString(), "missing.properties").toString();
         new AuthDBProperties(customConfigFile);
+    }
+
+    @Ignore("This is not working as expected")
+    @Test
+    public void testMissingDefaultProperties() throws IOException {
+        File tmpConfFile = Paths.get(tmpDir.toString(), serverConfFile.getName()).toFile();
+        assertTrue(serverConfFile.exists());
+        assertFalse(tmpConfFile.exists());
+        boolean thrown = false;
+        try {
+            FileUtils.moveFile(serverConfFile, tmpConfFile);
+            assertFalse(serverConfFile.exists());
+            assertTrue(tmpConfFile.exists());
+            new AuthDBProperties();
+        } catch (NullPointerException e) {
+            thrown = true;
+        } catch (Exception e) {
+            thrown = false;
+        }
+        FileUtils.moveFile(tmpConfFile, serverConfFile);
+        assertTrue(serverConfFile.exists());
+        assertFalse(tmpConfFile.exists());
+        assertTrue(thrown);
     }
 }
 
