@@ -12,6 +12,7 @@ generate_marcxml_with_auth_uris () {
     stamp=$(date --iso-8601)
     filename=$(basename ${MRC_FILE} .mrc)
     LOG_FILE="${LD4P_LOGS}/${filename}_MarcToXML_${stamp}.log"
+    ERR_FILE="${LD4P_LOGS}/${filename}_MarcToXML_${stamp}_errors.log"
 
     echo
     echo "Converting MARC file:  ${MRC_FILE}"
@@ -30,10 +31,13 @@ generate_marcxml_with_auth_uris () {
     SUCCESS=$?
     if [ ${SUCCESS} ]; then
         echo "Completed conversion."
-        echo "Moving MARC file to archive: ${LD4P_ARCHIVE_MARC}/"
-        mv ${MRC_FILE} ${LD4P_ARCHIVE_MARC}/
+        if [ ${LD4P_ARCHIVE_ENABLED} ]; then
+            # Archive the MRC_FILE (preserve timestamps etc.)
+            rsync -a --update "${MRC_FILE}" "${LD4P_ARCHIVE_MARC}/"
+            rm "${MRC_FILE}"
+        fi
     else
-        echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${LD4P_LOGS}/errors
+        echo "ERROR: Conversion failed for ${MRC_FILE}" | tee --append ${ERR_FILE}
     fi
 
     return ${SUCCESS}
