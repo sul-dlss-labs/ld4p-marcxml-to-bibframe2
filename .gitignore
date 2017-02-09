@@ -11,3 +11,6 @@
 # Mac
 .DS_Store
 
+# Development laptop scripts
+laptop*
+
