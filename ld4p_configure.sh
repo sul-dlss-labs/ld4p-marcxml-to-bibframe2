@@ -67,6 +67,13 @@ mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 
+# Record processing options (toggles):
 # Toggle to archive processed records
 export LD4P_ARCHIVE_ENABLED=true
+# Toggle to replace existing MARC-XML files; note that when MARC binary files
+# have a timestamp later than a MARC-XML file, the XML file will be replaced.
+export LD4P_MARCXML_REPLACE=false
+# Toggle to replace existing MARC-RDF files; note that when MARC-XML files
+# have a timestamp later than a MARC-RDF file, the RDF file will be replaced.
+export LD4P_MARCRDF_REPLACE=false
 
