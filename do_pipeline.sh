@@ -7,6 +7,7 @@ TBD=/s/SUL/Bin/LD4P/TB1/bin
 
 . $TBD/generate_marc.sh
 
-. $TBD/generate_marcxml_with_auth_uris.sh
+. $TBD/ld4p_configure.sh
+. $TBD/run_marc_bin2xml_conversion.sh
+. $TBD/run_marc_xml2rdf_conversion.sh
 
-. $TBD/marcxml2bibframe.sh

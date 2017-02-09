@@ -8,8 +8,6 @@
 # system ENV or on the command line, like so:
 # LD4P_SIRSI=/ld4p_data LD4P_RDF=/ld4p_rdf source /path/to/ld4p_configure.sh
 
-SCRIPT_PATH=$(dirname $0)
-
 export LD4P_BASEURI="http://linked-data-test.stanford.edu/library/"
 
 # If the system already defines an LD4P_SIRSI path, it will be used.
@@ -63,8 +61,4 @@ mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
 mkdir -p ${LD4P_CONFIGS} || kill -INT $$
-
-# Source bash functions to run converters
-source ${SCRIPT_PATH}/generate_marcxml_with_auth_uris.sh
-source ${SCRIPT_PATH}/loc_marc2bibframe.sh
 

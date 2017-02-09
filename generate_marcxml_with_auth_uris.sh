@@ -1,12 +1,6 @@
 # vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=sh
 #!/bin/bash
 
-# Check dependencies
-if [ "$LD4P_MARC" == "" ]; then
-    SCRIPT_PATH=$(dirname $0)
-    source ${SCRIPT_PATH}/ld4p_configure.sh
-fi
-
 # Bash function to convert one MARC file to XML files for each record.
 # Depends on the environment variables defined in ld4p_configure.sh
 # Depends on installation of the ld4p-tracer-bullets java library.
