@@ -133,10 +133,31 @@ For example, the effective defaults are:
     
 #### Development Conversions
 
-Examples of running conversions on a development laptop are in the
-`laptop_*.sh` scripts.  In short, create two file system paths
-for MARC and RDF data and set those paths in `laptop_configure.sh`;
-the rest of the configuration should be automatic.  Once the
+Follow the getting started notes above and once the
 `ld4p_install_libraries.sh` works, it should be possible to
-run the conversions using the `laptop_reset_and_run*.sh` scripts.
-Similar wrapper-scripts can be created to run conversions on any system.
+run the conversions.  To work on custom configurations and
+shell scripts, prefix the script file with `laptop` and git
+will ignore them.
+
+In brief, create two file system paths for MARC and RDF data and
+add those paths to a `laptop_configure.sh` script, and
+the rest of the configuration should be automatic.  Read the
+`ld4p_configure.sh` details and modify anything there after
+that file is sources.  For example,
+```
+#laptop_configure.sh
+#!/bin/bash
+export LD4P_SIRSI=/ld4p/marc
+export LD4P_RDF=/ld4p/rdf
+source ./ld4p_configure.sh
+# modify anything from ld4p_configure.sh here
+```
+
+Using that `laptop_configure.sh` script, an example of running
+conversions on a development laptop:
+```
+source ./laptop_configure.sh
+run_marc_bin2xml_conversion.sh
+run_marc_xml2rdf_conversion.sh
+```
+
