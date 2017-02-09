@@ -21,7 +21,7 @@
         </Appender>
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="OFF">
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
