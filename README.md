@@ -135,22 +135,27 @@ For example, the effective defaults are:
 
 Follow the getting started notes above and once the
 `ld4p_install_libraries.sh` works, it should be possible to
-run the conversions.  To work on custom configurations and
-shell scripts, prefix the script file with `laptop` and git
-will ignore them.
+run the conversions on a development laptop.  To work on
+custom configurations and shell scripts, prefix the script
+file with `laptop` and git will ignore them.
 
 In brief, create two file system paths for MARC and RDF data and
 add those paths to a `laptop_configure.sh` script, and
 the rest of the configuration should be automatic.  Read the
-`ld4p_configure.sh` details and modify anything there after
-that file is sources.  For example,
+`ld4p_configure.sh` details to understand what happens.  Then
+copy that configuration file into a custom configuration file
+and modify anything as required. For example,
+```
+cp ld4l_configure.sh laptop_configure.sh
+```
+Then add the laptop paths to the top of `laptop_configure.sh`:
 ```
 #laptop_configure.sh
 #!/bin/bash
 export LD4P_SIRSI=/ld4p/marc
 export LD4P_RDF=/ld4p/rdf
-source ./ld4p_configure.sh
-# modify anything from ld4p_configure.sh here
+# the rest of this file is from ld4p_configure.sh
+# modify anything from ld4p_configure.sh as required
 ```
 
 Using that `laptop_configure.sh` script, an example of running
