@@ -49,6 +49,12 @@ The scripts that create the MARC files for conversion are located in the
 [sul-dlss/ld4p-tracer-bullet-scripts](https://github.com/sul-dlss/ld4p-tracer-bullet-scripts)
 repository.  The instructions in that repository can be followed to run those scripts.
 
+###LD4L projects with similar goals
+
+The initial LD4L project created some tools that could be useful in this project:
+- https://github.com/ld4l/ld4l_browser_data
+- https://github.com/ld4l/ld4l_blacklight_search
+
 
 ## Development
 
