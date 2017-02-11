@@ -1,6 +1,5 @@
 package org.stanford;
 
-import oracle.jdbc.pool.OracleDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,8 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -19,23 +16,21 @@ class AuthDBProperties {
 
     private static Logger log = LogManager.getLogger(AuthDBProperties.class.getName());
 
-    private static final String DEFAULT_CONFIG_FILE = "/server.conf";
+    private static final String PROPERTY_RESOURCE = "/server.conf";
 
     private String server = null;
     private String service = null;
     private String userName = null;
     private String userPass = null;
-    private String propertyFile = null;
 
     public AuthDBProperties() throws IOException {
-        // initialize using the default property file resource
-        this.propertyFile = propertyFileResource();
-        initDataSourceProperties();
+        Properties properties = loadPropertyResource();
+        initDataSourceProperties(properties);
     }
 
     public AuthDBProperties(String propertyFile) throws IOException {
-        this.propertyFile = propertyFile;
-        initDataSourceProperties();
+        Properties properties = loadPropertyFile(propertyFile);
+        initDataSourceProperties(properties);
     }
 
     public String getURL() {
@@ -74,36 +69,39 @@ class AuthDBProperties {
         this.userPass = userPass;
     }
 
-    private void initDataSourceProperties() throws IOException {
+    private void initDataSourceProperties(Properties properties) {
+        this.server = properties.getProperty("SERVER");
+        this.service = properties.getProperty("SERVICE_NAME");
+        this.userName = properties.getProperty("USER");
+        this.userPass = properties.getProperty("PASS");
+    }
+
+    private Properties loadPropertyFile(String propertyFile) throws IOException {
         try {
-            Properties props = loadDataSourceProperties(propertyFile);
-            this.server = props.getProperty("SERVER");
-            this.service = props.getProperty("SERVICE_NAME");
-            this.userName = props.getProperty("USER");
-            this.userPass = props.getProperty("PASS");
+            InputStream iStream = new FileInputStream(propertyFile);
+            return loadProperties(iStream);
         } catch (IOException e) {
-            log.fatal("Failed to initialize AuthDBProperties", e);
+            log.fatal("Failed to load property file:" + propertyFile , e);
             throw e;
         }
     }
 
-    private static Properties loadDataSourceProperties(String propertyFile) throws IOException {
-        FileInputStream iStream = new FileInputStream(propertyFile);
+    private Properties loadPropertyResource() throws IOException {
+        try {
+            Class cls = AuthDBProperties.class;
+            InputStream iStream = cls.getResourceAsStream(PROPERTY_RESOURCE);
+            return loadProperties(iStream);
+        } catch (IOException e) {
+            log.fatal("Failed to load property resource:" + PROPERTY_RESOURCE, e);
+            throw e;
+        }
+    }
+
+    private Properties loadProperties(InputStream iStream) throws IOException {
         Properties props = new Properties();
         props.load(iStream);
         iStream.close();
         log.debug( props.toString() );
         return props;
     }
-
-    private static String propertyFileResource() {
-        Class cls = AuthDBProperties.class;
-        URL path = cls.getResource(DEFAULT_CONFIG_FILE);
-        if (path == null)
-            path = cls.getClassLoader().getResource(DEFAULT_CONFIG_FILE);
-        if (path == null)
-            log.fatal("Failed to find default server.conf file resource");
-        return path.getFile();
-    }
-
 }
