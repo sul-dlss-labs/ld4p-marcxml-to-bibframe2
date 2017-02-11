@@ -8,7 +8,9 @@ Symphony scripts to select and export catalog records.
 
 Conversion scripts that use and run conversion utilities, including:
  - [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
+   - A packaged archive from this project should be in `./lib/ld4p_converter.jar`
  - [LOC marc2bibframe](https://github.com/lcnetdev/marc2bibframe.git)
+   - This LOC repository is a submodule of this project.
 
 
 There could be a cron job that runs and generates MARC record dumps as
@@ -23,7 +25,6 @@ through a conversion pipeline.
 - Maven 3
 - Converter utilities installed on the Java classpath
     - The `ld4p_install_*.sh` scripts should take care of dependencies
-    - [sul-dlss/ld4p-tracer-bullets](https://github.com/sul-dlss/ld4p-tracer-bullets)
     - [LOC marc2bibframe](https://github.com/lcnetdev/marc2bibframe.git)
 - File system configuration details
     - See how `ld4p_configure.sh` sets various input/output paths
@@ -46,8 +47,10 @@ Review and modify `ld4p_configure.sh` as required to configure
 system paths for data files (see details in that script).
 Then install the dependencies (only required once):
 ```
-source ./ld4p_configure.sh
-source ./ld4p_install_libraries.sh
+cp ld4p_configure.sh custom_configure.sh
+# edit custom_configure.sh
+source ./custom_configure.sh
+./ld4p_install_libraries.sh
 ```
 
 #### Updating Dependencies
@@ -58,7 +61,6 @@ managed using `git submodule` features. If any submodules are updated,
 this project should be redeployed. For example, to update all
 submodules to the latest master for the remote, e.g.:
 ```
-cd ld4p-tracer-bullet-scripts # a clone of this project
 git submodule foreach git pull origin master
 ```
 
