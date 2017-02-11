@@ -13,17 +13,7 @@ fi
 SCRIPT_PATH=$(dirname $0)
 export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
 if [ ! -f "${LD4P_JAR}" ]; then
-    TB_PATH="${SCRIPT_PATH}/ld4p_tracer_bullets"
-    TB_JAR_FILE="${TB_PATH}/conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar"
-    if [ ! -f "${TB_JAR_FILE}" ]; then
-        pushd ${TB_PATH} > /dev/null
-        echo "Building ld4p-tracer-bullets project"
-        # Building this library depends on private configuration files
-        # that must be installed by the ld4p_install_shared_configs
-        rsync -a ${LD4P_CONFIGS}/conversiontracerbullet/ conversiontracerbullet/
-        mvn package
-        popd > /dev/null
-    fi
+    TB_JAR_FILE="./lib/ld4p_converter.jar"
     # Confirm the package is available
     if [ ! -f "${TB_JAR_FILE}" ]; then
         echo "ERROR: Expected to find: ${TB_JAR_FILE}"
@@ -36,6 +26,7 @@ fi
 if [ ! -f "${LD4P_JAR}" ]; then
    echo "ERROR: The LD4P scripts require a java library: ${LD4P_JAR}" 1>&2
    echo "See https://github.com/sul-dlss/ld4p-tracer-bullets for details" 1>&2
+   echo "Build that project and place the packaged artifact into this project." 1>&2
    exit 1
 fi
 
