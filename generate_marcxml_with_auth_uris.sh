@@ -31,7 +31,7 @@ generate_marcxml_with_auth_uris () {
     SUCCESS=$?
     if [ ${SUCCESS} ]; then
         echo "Completed conversion."
-        if [ ${LD4P_ARCHIVE_ENABLED} ]; then
+        if [ ${LD4P_ARCHIVE_ENABLED} == true ]; then
             # Archive the MRC_FILE (preserve timestamps etc.)
             rsync -a --update "${MRC_FILE}" "${LD4P_ARCHIVE_MARC}/"
             rm "${MRC_FILE}"

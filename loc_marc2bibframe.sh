@@ -50,7 +50,7 @@ loc_marc2bibframe () {
 
         SUCCESS=$?
         if [ ${SUCCESS} ]; then
-            if [ ${LD4P_ARCHIVE_ENABLED} ]; then
+            if [ ${LD4P_ARCHIVE_ENABLED} == true ]; then
                 # Archive the MRC_XML file (preserve timestamps etc.)
                 rsync -a --update "${MRC_XML}" "${LD4P_ARCHIVE_MARCXML}/"
                 rm ${MRC_XML}
