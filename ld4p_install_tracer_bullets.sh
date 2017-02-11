@@ -5,7 +5,7 @@
 if [ "$LD4P_CONFIGS" == "" ]; then
     echo "LD4P_CONFIGS is undefined."
     echo "Please try again after 'source ld4p_configure.sh'"
-    return 1
+    exit 1
 fi
 
 # Java libraries should be installed or deployed from https://github.com/sul-dlss/ld4p-tracer-bullets
@@ -13,7 +13,7 @@ fi
 SCRIPT_PATH=$(dirname $0)
 export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
 if [ ! -f "${LD4P_JAR}" ]; then
-    TB_PATH="${SCRIPT_PATH}/ld4p-tracer-bullets"
+    TB_PATH="${SCRIPT_PATH}/ld4p_tracer_bullets"
     TB_JAR_FILE="${TB_PATH}/conversiontracerbullet/target/conversion-tracer-bullet-jar-with-dependencies.jar"
     if [ ! -f "${TB_JAR_FILE}" ]; then
         pushd ${TB_PATH} > /dev/null
@@ -21,13 +21,14 @@ if [ ! -f "${LD4P_JAR}" ]; then
         # Building this library depends on private configuration files
         # that must be installed by the ld4p_install_shared_configs
         rsync -a ${LD4P_CONFIGS}/conversiontracerbullet/ conversiontracerbullet/
-        mvn package > /dev/null
+        mvn package
         popd > /dev/null
     fi
     # Confirm the package is available
     if [ ! -f "${TB_JAR_FILE}" ]; then
-        echo "Expected to find: ${TB_JAR_FILE}"
-        return 1
+        echo "ERROR: Expected to find: ${TB_JAR_FILE}"
+        echo
+        exit 1
     fi
     cp ${TB_JAR_FILE} ${LD4P_JAR}
 fi
@@ -35,6 +36,6 @@ fi
 if [ ! -f "${LD4P_JAR}" ]; then
    echo "ERROR: The LD4P scripts require a java library: ${LD4P_JAR}" 1>&2
    echo "See https://github.com/sul-dlss/ld4p-tracer-bullets for details" 1>&2
-   return 1
+   exit 1
 fi
 

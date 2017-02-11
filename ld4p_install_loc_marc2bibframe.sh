@@ -5,7 +5,7 @@
 if [ "$LD4P_CONFIGS" == "" ]; then
     echo "LD4P_CONFIGS is undefined."
     echo "Please try again after 'source ld4p_configure.sh'"
-    return 1
+    exit 1
 fi
 
 # The LOC converter is from https://github.com/lcnetdev/marc2bibframe.git
@@ -22,6 +22,6 @@ fi
 if [ ! -f "${LOC_M2B_XQUERY}" ]; then
    echo "ERROR: The LD4P scripts require an LOC converter source: ${LOC_M2B_XQUERY}" 1>&2
    echo "The LOC converter is from https://github.com/lcnetdev/marc2bibframe.git" 1>&2
-   return 1
+   exit 1
 fi
 
