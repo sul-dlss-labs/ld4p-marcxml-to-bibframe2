@@ -77,3 +77,7 @@ export LD4P_MARCXML_REPLACE=false
 # have a timestamp later than a MARC-RDF file, the RDF file will be replaced.
 export LD4P_MARCRDF_REPLACE=false
 
+# Paths for libraries
+export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
+
+
