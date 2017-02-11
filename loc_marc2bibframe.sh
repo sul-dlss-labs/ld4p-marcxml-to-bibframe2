@@ -22,13 +22,14 @@ export M2B_LOG_FILE="${LD4P_LOGS}/Marc2bibframe_${stamp}.log"
 echo "LOC converter logs to M2B_LOG_FILE: ${M2B_LOG_FILE}"
 
 loc_marc2bibframe () {
+    MRC_XML=$1
+
     stamp=$(date --iso-8601=sec)
 
-    MRC_XML=$1
     filename=$(basename "${MRC_XML}" ".xml")
     MRC_RDF="${LD4P_MARCRDF}/${filename}.rdf"
 
-    if [ "${LD4P_MARCRDF_REPLACE}" != ""  -o  "${MRC_XML}" -nt "${MRC_RDF}" ]; then
+    if [ "${MRC_XML}" -nt "${MRC_RDF}" -o ${LD4P_MARCRDF_REPLACE} == true ]; then
         # LD4P_MARCRDF_REPLACE can force replacement for any existing RDF
         # "${MRC_XML}" -nt "${MRC_RDF}" is:
         #   True if MRC_XML exists and MRC_RDF does not, or
