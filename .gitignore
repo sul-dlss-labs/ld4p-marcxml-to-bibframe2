@@ -14,3 +14,8 @@
 # Development laptop scripts
 laptop*
 
+# Stanford Farmshare scripts are too specific to
+# a particular user account on Farmshare to be
+# included in this public git repo.
+farmshare*
+
