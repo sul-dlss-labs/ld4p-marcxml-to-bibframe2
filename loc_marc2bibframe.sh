@@ -16,10 +16,6 @@ SCRIPT_PATH=$(dirname $(readlink -f $0))
 export LOC_M2B_PATH="${SCRIPT_PATH}/loc_marc2bibframe"
 export LOC_M2B_XQUERY="${LOC_M2B_PATH}/xbin/saxon.xqy"
 
-stamp=$(date --iso-8601)
-export M2B_LOG_FILE="${LD4P_LOGS}/Marc2bibframe_${stamp}.log"
-echo "LOC converter logs to M2B_LOG_FILE: ${M2B_LOG_FILE}"
-
 loc_marc2bibframe () {
     MRC_XML=$1
 
@@ -45,7 +41,7 @@ loc_marc2bibframe () {
                 baseuri=${LD4P_BASEURI} \
                 serialization="rdfxml" \
                 1> ${MRC_RDF} \
-                2>> ${M2B_LOG_FILE}
+                2>> ${LD4P_MARCRDF_LOG}
 
         SUCCESS=$?
         if [ ${SUCCESS} ]; then
@@ -65,7 +61,7 @@ loc_marc2bibframe () {
         SUCCESS=0 # skipping an existing record is OK
     fi
 
-    echo "${msg}" >> ${M2B_LOG_FILE}
+    echo "${msg}" >> ${LD4P_MARCRDF_LOG}
     return ${SUCCESS}
 }
 

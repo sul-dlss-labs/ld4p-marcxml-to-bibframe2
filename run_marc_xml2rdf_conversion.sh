@@ -3,6 +3,10 @@
 # To replace existing MARC-RDF files, run this script with
 #LD4P_MARCRDF_REPLACE=true
 
+LOG_DATE=$(date +%Y%m%dT%H%M%S)
+export LD4P_MARCRDF_LOG="${LD4P_LOGS}/Marc2bibframe_${LOG_DATE}.log"
+echo "Converter logs to LD4P_MARCRDF_LOG: ${LD4P_MARCRDF_LOG}"
+
 # Source bash function to run converter
 source ./loc_marc2bibframe.sh
 
