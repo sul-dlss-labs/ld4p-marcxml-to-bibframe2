@@ -19,7 +19,7 @@ export LOC_M2B_XQUERY="${LOC_M2B_PATH}/xbin/saxon.xqy"
 loc_marc2bibframe () {
     MRC_XML=$1
 
-    stamp=$(date --iso-8601=sec)
+    log_stamp=$(date --iso-8601=sec)
 
     filename=$(basename "${MRC_XML}" ".xml")
     MRC_RDF="${LD4P_MARCRDF}/${filename}.rdf"
@@ -30,9 +30,9 @@ loc_marc2bibframe () {
         #   True if MRC_XML exists and MRC_RDF does not, or
         #   True if MRC_XML has been changed more recently than MRC_RDF.
         if [ -f "${MRC_RDF}" ]; then
-            msg="${stamp}  REPLACED  MARC-RDF file: ${MRC_RDF}"
+            msg="${log_stamp}  REPLACED  MARC-RDF file: ${MRC_RDF}"
         else
-            msg="${stamp}  CREATED   MARC-RDF file: ${MRC_RDF}"
+            msg="${log_stamp}  CREATED   MARC-RDF file: ${MRC_RDF}"
         fi
 
         java -cp ${LD4P_JAR} \
@@ -51,13 +51,13 @@ loc_marc2bibframe () {
                 rm ${MRC_XML}
             fi
         else
-            msg="${stamp}  FAILED    MARC-RDF file: ${MRC_RDF}"
+            msg="${log_stamp}  FAILED    MARC-RDF file: ${MRC_RDF}"
         fi
 
     else
         # The MRC_RDF file must exist and it must be newer than MRC_XML and
         # there is no forced replacement, so this conversion can be skipped.
-        msg="${stamp}  SKIPPED   MARC-RDF file: ${MRC_RDF}"
+        msg="${log_stamp}  SKIPPED   MARC-RDF file: ${MRC_RDF}"
         SUCCESS=0 # skipping an existing record is OK
     fi
 
