@@ -1,4 +1,3 @@
-# vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=sh
 #!/bin/bash
 
 # This install script depends on prior configuration

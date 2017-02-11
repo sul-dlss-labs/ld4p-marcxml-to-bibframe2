@@ -1,4 +1,3 @@
-# vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=sh
 #!/bin/bash
 
 # Bash function to convert one MARC file to XML files for each record.
