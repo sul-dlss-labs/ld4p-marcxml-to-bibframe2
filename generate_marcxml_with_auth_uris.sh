@@ -8,10 +8,11 @@ generate_marcxml_with_auth_uris () {
 
     MRC_FILE=$1
 
-    stamp=$(date --iso-8601)
     filename=$(basename ${MRC_FILE} .mrc)
-    LOG_FILE="${LD4P_LOGS}/${filename}_MarcToXML_${stamp}.log"
-    ERR_FILE="${LD4P_LOGS}/${filename}_MarcToXML_${stamp}_errors.log"
+    LOG_DATE=$(date +%Y%m%dT%H%M%S)
+    LOG_NAME="${LD4P_LOGS}/${filename}_MarcToXML_${LOG_DATE}"
+    LOG_FILE="${LOG_NAME}.log"
+    ERR_FILE="${LOG_NAME}_errors.log"
 
     echo
     echo "Converting MARC file:  ${MRC_FILE}"
