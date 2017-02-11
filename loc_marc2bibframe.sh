@@ -13,6 +13,10 @@
 #LD4P_MARCRDF_REPLACE=true loc_marc2bibframe {MRC_XML}
 #
 
+SCRIPT_PATH=$(dirname $(readlink -f $0))
+export LOC_M2B_PATH="${SCRIPT_PATH}/loc_marc2bibframe"
+export LOC_M2B_XQUERY="${LOC_M2B_PATH}/xbin/saxon.xqy"
+
 stamp=$(date --iso-8601)
 export M2B_LOG_FILE="${LD4P_LOGS}/Marc2bibframe_${stamp}.log"
 echo "LOC converter logs to M2B_LOG_FILE: ${M2B_LOG_FILE}"
