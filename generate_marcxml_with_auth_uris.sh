@@ -20,7 +20,7 @@ generate_marcxml_with_auth_uris () {
     echo "Logging conversion to: ${LOG_FILE}"
 
     options="-i ${MRC_FILE} -o ${LD4P_MARCXML} -l ${LOG_FILE}"
-    [ -n "${LD4P_MARCXML_REPLACE}" ] && options="${options} -r"
+    [ ${LD4P_MARCXML_REPLACE} == true ] && options="${options} -r"
 
     # Process all records in the MRC_FILE using marc4j and SQL to
     # look up authority keys and retrieve any URI values from
