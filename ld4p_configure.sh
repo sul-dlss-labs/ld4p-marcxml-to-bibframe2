@@ -20,8 +20,6 @@ fi
 if [ ! -d "$LD4P_SIRSI" ]; then
     echo "ERROR: The LD4P scripts require an LD4P_SIRSI path: ${LD4P_SIRSI}" 1>&2
     kill -INT $$
-else
-    echo "LD4P_SIRSI path: $LD4P_SIRSI"
 fi
 
 # If the system already defines an LD4P_RDF path, it will be used.
@@ -34,16 +32,16 @@ fi
 if [ ! -d "$LD4P_RDF" ]; then
     echo "ERROR: The LD4P scripts require an LD4P_RDF path: ${LD4P_RDF}" 1>&2
     kill -INT $$
-else
-    echo "LD4P_RDF path:   $LD4P_RDF"
 fi
 
 # Paths for code, configs and logs
 export LD4P_BIN="${LD4P_SIRSI}/bin"
+export LD4P_LIB="${LD4P_SIRSI}/lib"
 export LD4P_LOGS="${LD4P_SIRSI}/log"
 export LD4P_CONFIGS="${LD4P_SIRSI}/configs"
 # Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_BIN} || kill -INT $$
+mkdir -p ${LD4P_LIB} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
 mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
