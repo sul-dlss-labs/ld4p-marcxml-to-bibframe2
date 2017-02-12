@@ -20,8 +20,6 @@ fi
 if [ ! -d "$LD4P_SIRSI" ]; then
     echo "ERROR: The LD4P scripts require an LD4P_SIRSI path: ${LD4P_SIRSI}" 1>&2
     kill -INT $$
-else
-    echo "LD4P_SIRSI path: $LD4P_SIRSI"
 fi
 
 # If the system already defines an LD4P_RDF path, it will be used.
@@ -34,8 +32,6 @@ fi
 if [ ! -d "$LD4P_RDF" ]; then
     echo "ERROR: The LD4P scripts require an LD4P_RDF path: ${LD4P_RDF}" 1>&2
     kill -INT $$
-else
-    echo "LD4P_RDF path:   $LD4P_RDF"
 fi
 
 # Paths for code, configs and logs
