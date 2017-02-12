@@ -12,8 +12,7 @@
 #LD4P_MARCRDF_REPLACE=true loc_marc2bibframe {MRC_XML}
 #
 
-SCRIPT_PATH=$(dirname $(readlink -f $0))
-export LOC_M2B_PATH="${SCRIPT_PATH}/loc_marc2bibframe"
+export LOC_M2B_PATH="${LD4P_LIB}/loc_marc2bibframe"
 export LOC_M2B_XQUERY="${LOC_M2B_PATH}/xbin/saxon.xqy"
 
 loc_marc2bibframe () {

@@ -10,11 +10,12 @@ fi
 # The LOC converter is from https://github.com/lcnetdev/marc2bibframe.git
 # Confirm the LOC converter source package is available
 SCRIPT_PATH=$(dirname $0)
-export LOC_M2B_PATH="${SCRIPT_PATH}/loc_marc2bibframe"
+export LOC_M2B_PATH="${LD4P_LIB}/loc_marc2bibframe"
 export LOC_M2B_XQUERY="${LOC_M2B_PATH}/xbin/saxon.xqy"
-if [ ! -f "${LOC_M2B_PATH}" ]; then
+if [ ! -d "${LOC_M2B_PATH}" ]; then
     pushd ${SCRIPT_PATH} > /dev/null
     git submodule update --init --recursive
+    rsync -a --update ./loc_marc2bibframe "${LD4P_LIB}/"
     popd > /dev/null
 fi
 # Confirm the source package is available

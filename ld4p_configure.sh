@@ -36,10 +36,12 @@ fi
 
 # Paths for code, configs and logs
 export LD4P_BIN="${LD4P_SIRSI}/bin"
+export LD4P_LIB="${LD4P_SIRSI}/lib"
 export LD4P_LOGS="${LD4P_SIRSI}/log"
 export LD4P_CONFIGS="${LD4P_SIRSI}/configs"
 # Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_BIN} || kill -INT $$
+mkdir -p ${LD4P_LIB} || kill -INT $$
 mkdir -p ${LD4P_LOGS} || kill -INT $$
 mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
