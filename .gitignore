@@ -11,6 +11,9 @@
 # Mac
 .DS_Store
 
+# Log files
+log/*.log
+
 # Development laptop scripts
 laptop*
 
