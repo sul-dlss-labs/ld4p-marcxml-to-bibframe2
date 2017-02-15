@@ -79,7 +79,6 @@ public class MarcToXMLTest {
         FileUtils.deleteDirectory(outputPath.toFile());
     }
 
-    //  @Ignore("This does not yet test anything in MarcToXML\n")
     @Test
     public void main() throws Exception {
         // TODO: this can simply confirm that a MARC file is read
@@ -109,7 +108,7 @@ public class MarcToXMLTest {
         File file = new File(marcXmlFilePath);
         assertTrue(file.exists());
         assertTrue(marcXmlValid(marcXmlFilePath));
-
+        // Reconvert and replace
         convertMarcRecord(marcRecord);
         CommandLineParser parser = new DefaultParser();
         MarcToXML.setOptions();
