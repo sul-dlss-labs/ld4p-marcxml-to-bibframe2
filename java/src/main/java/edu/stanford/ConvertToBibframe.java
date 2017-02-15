@@ -1,4 +1,4 @@
-package org.stanford;
+package edu.stanford;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.*;

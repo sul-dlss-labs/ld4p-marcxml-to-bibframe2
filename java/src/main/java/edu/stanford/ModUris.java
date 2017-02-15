@@ -1,4 +1,4 @@
-package org.stanford;
+package edu.stanford;
 
 class ModUris {
 

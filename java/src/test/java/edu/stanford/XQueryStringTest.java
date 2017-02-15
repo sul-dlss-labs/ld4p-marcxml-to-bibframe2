@@ -1,4 +1,4 @@
-package org.stanford;
+package edu.stanford;
 
 import org.junit.Assert;
 import org.junit.Test;

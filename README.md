@@ -149,8 +149,8 @@ packaged JAR can be copied to a convenient location and used on the CLASSPATH or
 ```
 $ cp java/target/conversion-tracer-bullet-jar-with-dependencies.jar ~/lib/ld4p_conversion.jar
 $ LD4P_JAR=~/lib/ld4p_conversion.jar
-$ java -cp ${LD4P_JAR} org.stanford.MarcToXML -h
-usage: org.stanford.MarcToXML
+$ java -cp ${LD4P_JAR} edu.stanford.MarcToXML -h
+usage: edu.stanford.MarcToXML
  -h,--help               help message
  -i,--inputFile <arg>    MARC input file (binary .mrc file expected;
                          required)

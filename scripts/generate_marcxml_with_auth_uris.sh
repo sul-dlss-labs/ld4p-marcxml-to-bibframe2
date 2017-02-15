@@ -26,7 +26,7 @@ generate_marcxml_with_auth_uris () {
     # look up authority keys and retrieve any URI values from
     # 92X fields and put them in the subfield 0 so that the 
     # LOC converter (for Bibframe v1) can use them correctly.
-    java -cp ${LD4P_JAR} org.stanford.MarcToXML ${options}
+    java -cp ${LD4P_JAR} edu.stanford.MarcToXML ${options}
 
     SUCCESS=$?
     if [ ${SUCCESS} ]; then

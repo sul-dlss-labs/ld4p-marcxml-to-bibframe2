@@ -1,4 +1,4 @@
-package org.stanford;
+package edu.stanford;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
@@ -6,7 +6,7 @@ import org.junit.*;
 
 import static java.nio.file.Files.createTempDirectory;
 import static org.junit.Assert.*;
-import static org.stanford.MarcToXML.*;
+import static edu.stanford.MarcToXML.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

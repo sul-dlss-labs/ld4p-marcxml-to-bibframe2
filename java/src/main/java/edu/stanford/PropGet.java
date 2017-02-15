@@ -1,4 +1,4 @@
-package org.stanford;
+package edu.stanford;
 
 import java.io.*;
 import java.util.Properties;
