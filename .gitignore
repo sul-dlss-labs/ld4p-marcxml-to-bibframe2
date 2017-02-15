@@ -27,5 +27,7 @@ buildNumber.properties
 .DS_Store
 
 conversiontracerbullet/src/main/resources/server.conf
+conversiontracerbullet/src/test/resources/server.conf
+conversiontracerbullet/log
 files/
 
