@@ -135,12 +135,7 @@ class MarcToXML {
 
     public static void main (String [] args) throws IOException, ParseException {
 
-        options.addOption("h", "help", false, "help message");
-        options.addOption("i", "inputFile", true, "MARC input file (binary .mrc file expected; required)");
-        options.addOption("o", "outputPath", true, "MARC XML output path (default: ENV[\"LD4P_MARCXML\"])");
-        options.addOption("l", "logFile", true, "Log file output (default: " + logFileDefault + ")");
-        options.addOption("r", "replace", false, "Replace existing XML files (default: false)");
-
+        setOptions();
         CommandLineParser parser = new DefaultParser();
         cmd = parser.parse(options, args);
         printHelp();
@@ -156,6 +151,15 @@ class MarcToXML {
         while (marcReader.hasNext()) {
             convertMarcRecord(marcReader.next());
         }
+    }
+
+    public static void setOptions() {
+
+        options.addOption("h", "help", false, "help message");
+        options.addOption("i", "inputFile", true, "MARC input file (binary .mrc file expected; required)");
+        options.addOption("o", "outputPath", true, "MARC XML output path (default: ENV[\"LD4P_MARCXML\"])");
+        options.addOption("l", "logFile", true, "Log file output (default: " + logFileDefault + ")");
+        options.addOption("r", "replace", false, "Replace existing XML files (default: false)");
     }
 
     public static void convertMarcRecord (Record record) {

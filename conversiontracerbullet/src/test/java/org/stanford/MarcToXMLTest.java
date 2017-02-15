@@ -112,6 +112,7 @@ public class MarcToXMLTest {
 
         convertMarcRecord(marcRecord);
         CommandLineParser parser = new DefaultParser();
+        MarcToXML.setOptions();
         String [] args = new String[] {"-r"};
         CommandLine cmd = parser.parse(options, args);
         Boolean xmlReplace = cmd.hasOption("r");
