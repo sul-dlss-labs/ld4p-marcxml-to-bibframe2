@@ -37,12 +37,12 @@ import java.util.List;
  */
 class MarcToXML {
 
-    private static Connection authDB = null;
+    public static Connection authDB = null;
 
     // Apache Commons-CLI Options
     // https://commons.apache.org/proper/commons-cli/introduction.html
-    private static CommandLine cmd = null;
-    private static Options options = new Options();
+    public static CommandLine cmd = null;
+    public static Options options = new Options();
 
     private static void printHelp() {
         if (! cmd.hasOption('h'))
@@ -63,9 +63,9 @@ class MarcToXML {
         }
     }
 
-    private static Boolean xmlReplace = false;
+    public static Boolean xmlReplace = false;
 
-    private static String xmlOutputPath = null;
+    public static String xmlOutputPath = null;
 
     public static void setXmlOutputPath(String path) {
         if (path != null)
@@ -154,7 +154,7 @@ class MarcToXML {
         FileInputStream marcInputFileStream = new FileInputStream(marcInputFile);
         MarcReader marcReader = new MarcStreamReader(marcInputFileStream);
         while (marcReader.hasNext()) {
-            convertMarcRecord( marcReader.next() );
+            convertMarcRecord(marcReader.next());
         }
     }
 
@@ -162,9 +162,9 @@ class MarcToXML {
         try {
             String xmlFilePath = xmlOutputFilePath(record);
             File xmlFile = new File(xmlFilePath);
-            Boolean doConversion = (! xmlFile.exists()) || xmlReplace;
-            if (doConversion) {
+            if (doConversion(xmlFile, xmlReplace)) {
                 MarcWriter writer = marcRecordWriter(xmlFilePath);
+
                 marcResolveAuthorities(record);
                 writer.write(record);
                 writer.close();
@@ -200,19 +200,7 @@ class MarcToXML {
                 String data = sf.getData();
 
                 if (codeStr.equals("=")) {
-                    setAuthConnection();
-
-                    String key = data.substring(2);
-                    String authID = AuthIDfromDB.lookup(key, authDB);
-
-                    //TODO consider just getting all the URI's from the authority record here
-                    String[] tagNs = {"920", "921", "922"};
-                    for (String n : tagNs) {
-                        String uri = AuthURIfromDB.lookup(authID, n, authDB);
-                        if (uri.length() > 0)
-                            dataField.addSubfield(factory.newSubfield('0', uri));
-                    }
-                    dataField.removeSubfield(sf);
+                    addAuthURIandRemoveSubfields(data, dataField, sf, factory);
                 }
                 if (codeStr.equals("?")) {
                     dataField.removeSubfield(sf);
@@ -229,20 +217,46 @@ class MarcToXML {
         return outFilePath.toString();
     }
 
-    private static MarcWriter marcRecordWriter(String filePath) throws FileNotFoundException {
-        OutputStream outFileStream = new FileOutputStream(filePath);
-        return new MarcXmlWriter(outFileStream, true);
+    public static Boolean doConversion (File xmlFile, Boolean xmlReplace) {
+        if (!xmlFile.exists() || xmlReplace) {
+             return true;
+         }
+         else {
+             return false;
+         }
     }
 
-    private static void setAuthConnection() throws IOException, SQLException {
+    public static void addAuthURIandRemoveSubfields(String data, DataField dataField,
+                                                    Subfield sf, MarcFactory factory) throws IOException, SQLException {
+        setAuthConnection();
+
+        String key = data.substring(2);
+        String authID = AuthIDfromDB.lookup(key, authDB);
+
+        //TODO consider just getting all the URI's from the authority record here
+        String[] tagNs = {"920", "921", "922"};
+        for (String n : tagNs) {
+            String uri = AuthURIfromDB.lookup(authID, n, authDB);
+            if (uri.length() > 0)
+                dataField.addSubfield(factory.newSubfield('0', uri));
+        }
+        dataField.removeSubfield(sf);
+    }
+
+    public static void setAuthConnection() throws IOException, SQLException {
         if ( authDB == null )
             authDB = AuthDBConnection.open();
+    }
+
+    private static MarcWriter marcRecordWriter(String filePath) throws FileNotFoundException {
+        OutputStream outFileStream = new FileOutputStream(filePath);;
+        return new MarcXmlWriter(outFileStream, true);
     }
 
     private static void reportErrors(Exception e) {
         String msg = e.getMessage();
         log.fatal(msg);
         System.err.println(msg);
-        e.printStackTrace();
+        //e.printStackTrace();
     }
 }
