@@ -26,8 +26,7 @@ buildNumber.properties
 # Mac
 .DS_Store
 
-conversiontracerbullet/src/main/resources/server.conf
-conversiontracerbullet/src/test/resources/server.conf
-conversiontracerbullet/log
+java/src/main/resources/server.conf
+java/src/test/resources/server.conf
+java/log
 files/
-

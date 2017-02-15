@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <name>LD4P Tracer Bullets</name>
     <modules>
-        <module>conversiontracerbullet</module>
+        <module>java</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
