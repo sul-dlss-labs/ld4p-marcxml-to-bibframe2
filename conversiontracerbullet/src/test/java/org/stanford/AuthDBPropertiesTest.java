@@ -1,23 +1,25 @@
 package org.stanford;
 
 import org.apache.commons.io.FileUtils;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 import static java.nio.file.Files.createTempDirectory;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
+
 
 public class AuthDBPropertiesTest {
 
@@ -28,23 +30,28 @@ public class AuthDBPropertiesTest {
 
     private AuthDBProperties authProps;
     private Properties serverConf;
-    private String propertyFile;
+    private String serverConfResourceName = "/server.conf";
     private File serverConfFile;
     private File tmpDir;
 
     @Before
-    public void setUp() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-        authProps = new AuthDBProperties();
-        // Use private method to get the server.conf file path
-        Field f = AuthDBProperties.class.getDeclaredField("propertyFile");
-        f.setAccessible(true);
-        propertyFile = (String) f.get(authProps);
-        serverConfFile = new File(propertyFile);
-        // Use private method to get the server.conf properties
-        Method m = AuthDBProperties.class.getDeclaredMethod("loadDataSourceProperties", String.class);
-        m.setAccessible(true);
-        serverConf = (Properties) m.invoke(authProps, propertyFile);
+    public void setUp() throws IOException {
         tmpDir = createTempDirectory("AuthDBPropertiesTest_").toFile();
+        authProps = new AuthDBProperties();
+    }
+
+    public void setServerConfFile() {
+        Class cls = AuthDBProperties.class;
+        URL path = cls.getResource(serverConfResourceName);
+        serverConfFile = new File(path.getFile());
+    }
+
+    public void setServerConf() throws IOException {
+        Class cls = AuthDBProperties.class;
+        InputStream iStream = cls.getResourceAsStream(serverConfResourceName);
+        serverConf = new Properties();
+        serverConf.load(iStream);
+        iStream.close();
     }
 
     @After
@@ -53,7 +60,8 @@ public class AuthDBPropertiesTest {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor() throws IOException {
+        setServerConf();
         assertEquals(serverConf.getProperty("USER"), authProps.getUserName());
         assertEquals(serverConf.getProperty("PASS"), authProps.getUserPass());
         assertEquals(serverConf.getProperty("SERVER"), authProps.getServer());
@@ -62,6 +70,8 @@ public class AuthDBPropertiesTest {
 
     @Test
     public void testConstructorWithString() throws IOException {
+        setServerConf();
+        setServerConfFile();
         FileUtils.copyFileToDirectory(serverConfFile, tmpDir);
         String customConfigFile = Paths.get(tmpDir.toString(), serverConfFile.getName()).toString();
         AuthDBProperties customProps = new AuthDBProperties(customConfigFile);
@@ -69,15 +79,6 @@ public class AuthDBPropertiesTest {
         assertEquals(serverConf.getProperty("PASS"), customProps.getUserPass());
         assertEquals(serverConf.getProperty("SERVER"), customProps.getServer());
         assertEquals(serverConf.getProperty("SERVICE_NAME"), customProps.getService());
-    }
-
-    @Test
-    public void testLoadDataSourceProperties() {
-        assertNotNull(serverConf.getProperty("USER"));
-        assertNotNull(serverConf.getProperty("PASS"));
-        assertNotNull(serverConf.getProperty("SERVER"));
-        assertNotNull(serverConf.getProperty("SERVICE_NAME"));
-        assertNull(serverConf.getProperty("MISSING_PROPERTY"));
     }
 
     @Test
@@ -128,27 +129,5 @@ public class AuthDBPropertiesTest {
         new AuthDBProperties(customConfigFile);
     }
 
-    @Ignore("This is not working as expected")
-    @Test
-    public void testMissingDefaultProperties() throws IOException {
-        File tmpConfFile = Paths.get(tmpDir.toString(), serverConfFile.getName()).toFile();
-        assertTrue(serverConfFile.exists());
-        assertFalse(tmpConfFile.exists());
-        boolean thrown = false;
-        try {
-            FileUtils.moveFile(serverConfFile, tmpConfFile);
-            assertFalse(serverConfFile.exists());
-            assertTrue(tmpConfFile.exists());
-            new AuthDBProperties();
-        } catch (NullPointerException e) {
-            thrown = true;
-        } catch (Exception e) {
-            thrown = false;
-        }
-        FileUtils.moveFile(tmpConfFile, serverConfFile);
-        assertTrue(serverConfFile.exists());
-        assertFalse(tmpConfFile.exists());
-        assertTrue(thrown);
-    }
 }
 
