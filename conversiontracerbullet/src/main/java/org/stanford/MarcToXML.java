@@ -37,12 +37,12 @@ import java.util.List;
  */
 class MarcToXML {
 
-    protected static Connection authDB = null;
+    static Connection authDB = null;
 
     // Apache Commons-CLI Options
     // https://commons.apache.org/proper/commons-cli/introduction.html
-    protected static CommandLine cmd = null;
-    protected static Options options = new Options();
+    static CommandLine cmd = null;
+    static Options options = new Options();
 
     private static void printHelp() {
         if (! cmd.hasOption('h'))
@@ -63,9 +63,9 @@ class MarcToXML {
         }
     }
 
-    protected static Boolean xmlReplace = false;
+    static Boolean xmlReplace = false;
 
-    protected static String xmlOutputPath = null;
+    static String xmlOutputPath = null;
 
     public static void setXmlOutputPath(String path) {
         if (path != null)
@@ -247,7 +247,7 @@ class MarcToXML {
         dataField.removeSubfield(sf);
     }
 
-    protected static void setAuthConnection() throws IOException, SQLException {
+    static void setAuthConnection() throws IOException, SQLException {
         if ( authDB == null )
             authDB = AuthDBConnection.open();
     }
