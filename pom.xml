@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.stanford</groupId>
-    <artifactId>ld4p-tracer-bullets</artifactId>
+    <groupId>edu.stanford</groupId>
+    <artifactId>ld4p-marc21-to-xml</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>LD4P Tracer Bullets</name>
+    <name>LD4P: convert marc21 data into marcxml (authority ids resolved to URIs via Symphony)</name>
     <modules>
-        <module>conversiontracerbullet</module>
+        <module>java</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,7 +23,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
-                    <mainClass>main.java.org.stanford.MarcToXML</mainClass>
+                    <mainClass>main.java.edu.stanford.MarcToXML</mainClass>
                 </configuration>
             </plugin>
             <plugin>

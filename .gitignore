@@ -26,8 +26,18 @@ buildNumber.properties
 # Mac
 .DS_Store
 
-conversiontracerbullet/src/main/resources/server.conf
-conversiontracerbullet/src/test/resources/server.conf
-conversiontracerbullet/log
+java/src/main/resources/server.conf
+java/src/test/resources/server.conf
+java/log
 files/
 
+# Log files
+log/*.log
+
+# Development laptop scripts
+laptop*
+
+# Stanford Farmshare scripts are too specific to
+# a particular user account on Farmshare to be
+# included in this public git repo.
+farmshare*

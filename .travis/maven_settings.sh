@@ -2,11 +2,11 @@
 
 # See the README.md file about how to obtain Oracle credentials and then
 # use them to configure the following environment variables on travis.ci at
-# https://travis-ci.org/sul-dlss/ld4p-tracer-bullets/settings
+# https://travis-ci.org/sul-dlss/ld4p-marc21-to-xml/settings
 #
 # MAVEN_MASTER_password is an arbitrary password
 # ORACLE_OJDBC_username belongs to an Oracle user account
-# ORACLE_OJDBC_password belongs to an Oracle user account
+# ORACLE_OJDBC_password (unencrypted) belongs to the Oracle user account
 
 mvn --version
 
@@ -57,4 +57,3 @@ cat > $SETTINGS_FILE <<SETTINGS_XML
 	</servers>
 </settings>
 SETTINGS_XML
-
