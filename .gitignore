@@ -26,13 +26,16 @@ buildNumber.properties
 # Mac
 .DS_Store
 
-java/src/main/resources/server.conf
-java/src/test/resources/server.conf
 java/log
 files/
 
 # Log files
 log/*.log
+
+# submodule files
+loc_marc2bibframe/*
+
+data
 
 # Development laptop scripts
 laptop*
