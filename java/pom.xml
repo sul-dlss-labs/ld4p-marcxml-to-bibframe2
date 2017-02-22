@@ -3,34 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ld4p-marc21-to-xml</artifactId>
+        <artifactId>ld4p-marcxml-to-bibframe1</artifactId>
         <groupId>edu.stanford</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xform-marc21-to-xml</artifactId>
-
-    <!--http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm-->
-    <repositories>
-        <repository>
-            <id>maven.oracle.com</id>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>https://maven.oracle.com</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven.oracle.com</id>
-            <url>https://maven.oracle.com</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <artifactId>xform-marcxml-to-bf1</artifactId>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -44,9 +23,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- NOTE: We don't need a groupId specification because the group is
-                     org.apache.maven.plugins ...which is assumed by default.
-                 -->
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <!--<descriptor>src/assembly/bin.xml</descriptor>-->
@@ -54,8 +30,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -74,36 +50,9 @@
         <!--COMPILE/RUNTIME-->
 
         <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.marc4j</groupId>
-            <artifactId>marc4j</artifactId>
-            <version>2.8.0</version>
-        </dependency>
-        <!-- Symphony is running Oracle 11.2 -->
-        <!-- http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html -->
-        <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.4</version>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
@@ -117,26 +66,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>2.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!--https://github.com/powermock/powermock/wiki/Mockito_maven-->
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!--2017-02: pulls in org.mockito:mockito-core:jar:1.10.19:test-->
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
