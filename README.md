@@ -6,6 +6,11 @@ convert marc21 data into marcxml, with authority ids resolved to URIs via Sympho
 
 ## Development
 
+### Dependencies
+
+- Java 8
+- Maven 3
+
 ### Compiling and Executing
 
 See Dependencies below for one time setup.
@@ -46,66 +51,3 @@ To update Coveralls from the command line, try:
 ```
 mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken
 ```
-
-### Dependencies / One Time Setup
-
-- Java 8
-- Maven 3
-
-The Oracle JDBC maven artifacts require a license, follow the instructions at:
-- http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm
-- https://blogs.oracle.com/dev2dev/entry/oracle_maven_repository_instructions_for
-
-Once the Oracle sign-up/sign-in and license agreement is accepted, add the sign-in
-credentials to maven settings.  Follow maven instructions to encrypt the passwords, see
-- https://maven.apache.org/guides/mini/guide-encryption.html
-  - encrypt a maven master password:
-
-          $ mvn --encrypt-master-password
-          Master password: TYPE_YOUR_PASSWD_HERE
-          {L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}
-
-  - add the encrypted maven master password to `~/.m2/settings-security.xml` in a block like:
-
-          <settingsSecurity>
-              <master>{L+bX9REL8CAH/EkcFM4NPLUxjaEZ6nQ79feSk+xDxhE=}</master>
-          </settingsSecurity>
-
-  - encrypt oracle server password:
-
-          $ mvn --encrypt-password
-          Password: TYPE_YOUR_PASSWD_HERE
-          {JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}
-
-  - add this encrypted oracle server password to `~/.m2/settings.xml` using this template:
-
-        <settings>
-          <servers>
-            <server>
-              <id>maven.oracle.com</id>
-              <username>your_oracle_username</username>
-              <password>{JhJfPXeAJm0HU9VwsWngQS5qGreK29EQ3fdm/7Q7A7c=}</password>
-              <configuration>
-                <basicAuthScope>
-                  <host>ANY</host>
-                  <port>ANY</port>
-                  <realm>OAM 11g</realm>
-                </basicAuthScope>
-                <httpConfiguration>
-                  <all>
-                    <params>
-                      <property>
-                        <name>http.protocol.allow-circular-redirects</name>
-                        <value>%b,true</value>
-                      </property>
-                    </params>
-                  </all>
-                </httpConfiguration>
-              </configuration>
-            </server>
-          </servers>
-        </settings>
-
-- For additional information about maven settings, see
-    - https://maven.apache.org/settings.html
-    - https://books.sonatype.com/nexus-book/reference/_adding_credentials_to_your_maven_settings.html

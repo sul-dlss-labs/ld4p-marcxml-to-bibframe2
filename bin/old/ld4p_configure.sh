@@ -47,21 +47,17 @@ mkdir -p ${LD4P_CONFIGS} || kill -INT $$
 
 # Paths for data records
 export LD4P_DATA="${LD4P_SIRSI}/Dataload/LD4P"
-export LD4P_MARC="${LD4P_DATA}/Marc"
 export LD4P_MARCXML="${LD4P_DATA}/MarcXML"
 export LD4P_MARCRDF="${LD4P_RDF}/MarcRDF"
 # Create paths, recursively, if they don't exist
 mkdir -p ${LD4P_DATA} || kill -INT $$
-mkdir -p ${LD4P_MARC} || kill -INT $$
 mkdir -p ${LD4P_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_MARCRDF} || kill -INT $$
 
 # Paths to archive processed records
-export LD4P_ARCHIVE_MARC="${LD4P_DATA}/Archive/Marc"
 export LD4P_ARCHIVE_MARCXML="${LD4P_DATA}/Archive/MarcXML"
 export LD4P_ARCHIVE_MARCRDF="${LD4P_DATA}/Archive/MarcRDF"
 # Create paths, recursively, if they don't exist
-mkdir -p ${LD4P_ARCHIVE_MARC} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCXML} || kill -INT $$
 mkdir -p ${LD4P_ARCHIVE_MARCRDF} || kill -INT $$
 
@@ -77,5 +73,3 @@ export LD4P_MARCRDF_REPLACE=false
 
 # Paths for libraries
 export LD4P_JAR="${LD4P_BIN}/ld4p_converter.jar"
-
-
