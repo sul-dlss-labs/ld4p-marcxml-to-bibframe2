@@ -133,15 +133,13 @@ class ConvertToBibframe {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer t = tf.newTransformer();
 
-        //Document source = new DOMSource(rdfxml.getDocumentElement());
-        Document modSource = ModUris.forBibframe(rdfxml);
-        DOMSource output = new DOMSource(modSource);
+        DOMSource output = new DOMSource(rdfxml.getDocumentElement());
         StreamResult streamResult = new StreamResult(System.out);
-        
+
         conversionLog.info("\nOUTPUTTING FILE...");
 
         t.transform(output, streamResult);
-        
+
         conversionLog.info("\nDONE!");
 
         conversionLog.info("Conversion successes: " + successes);
