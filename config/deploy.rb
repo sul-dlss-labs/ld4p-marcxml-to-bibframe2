@@ -34,7 +34,7 @@ Capistrano::OneTimeKey.generate_one_time_key!
 # append :linked_files, "config/database.yml", "config/secrets.yml"
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log'
+append :linked_dirs, 'log', 'loc_marc2bibframe'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
