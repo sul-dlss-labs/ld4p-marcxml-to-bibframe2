@@ -2,8 +2,7 @@
 .svg?branch=master)](https://travis-ci.org/sul-dlss/ld4p-marcxml-to-bibframe1
 )
 [![Coverage Status](https://coveralls.io/repos/github/sul-dlss/ld4p-marcxml-to-bibframe1
-/badge.svg?branch=master)](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1
-?branch=master)
+/badge.svg?branch=master)](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/sul-dlss/ld4p-marcxml-to-bibframe1.svg)](https://gemnasium.com/github.com/sul-dlss/ld4p-marcxml-to-bibframe1)
 
 # ld4p-marc21-to-xml
