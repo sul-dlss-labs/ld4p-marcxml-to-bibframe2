@@ -5,7 +5,7 @@
 /badge.svg?branch=master)](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/sul-dlss/ld4p-marcxml-to-bibframe1.svg)](https://gemnasium.com/github.com/sul-dlss/ld4p-marcxml-to-bibframe1)
 
-# ld4p-marc21-to-xml
+# ld4p-marcxml-to-bibframe1
 Convert marcxml data into bibframe1 rdfxml, using converter written by Library of Congress, available at https://github.com/lcnetdev/marc2bibframe
 
 ## Development
