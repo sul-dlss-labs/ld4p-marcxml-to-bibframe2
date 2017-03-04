@@ -1,24 +1,16 @@
-set :application, 'ld4p-marcxml-to-bibframe1'
-set :repo_url, 'https://github.com/sul-dlss/ld4p-marcxml-to-bibframe1.git'
+set :application, 'ld4p-marcxml-to-bibframe2'
+set :repo_url, 'https://github.com/sul-dlss/ld4p-marcxml-to-bibframe2.git'
 set :deploy_host, "sul-ld4p-converter-#{fetch(:stage)}.stanford.edu"
 set :user, 'ld4p'
 
-# Default branch is :master
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
-# Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/opt/app/#{fetch(:user)}/#{fetch(:application)}"
 
 server fetch(:deploy_host), user: fetch(:user), roles: 'app'
 
 # allow ssh to host
 Capistrano::OneTimeKey.generate_one_time_key!
-
-# Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
-
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, "/var/www/my_app_name"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -34,7 +26,7 @@ Capistrano::OneTimeKey.generate_one_time_key!
 # append :linked_files, "config/database.yml", "config/secrets.yml"
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'loc_marc2bibframe'
+append :linked_dirs, 'log', 'loc_marc2bibframe2'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -45,22 +37,35 @@ append :linked_dirs, 'log', 'loc_marc2bibframe'
 # update shared_configs before restarting app
 #before 'deploy:restart', 'shared_configs:update'
 
-namespace :maven do
-  desc 'package'
-  task :package do
+namespace :loc do
+  desc 'git clone LOC marc2bibframe2 (if it does not exist already)'
+  task :clone_marc2bibframe2 do
     on roles(:app) do
-      execute "cd #{current_path} && /usr/local/maven/bin/mvn clean package"
+      cmd  = "cd #{shared_path} && "
+      cmd += "if [ ! -d loc_marc2bibframe2 ]; then "
+      cmd += "  git clone https://github.com/lcnetdev/marc2bibframe2.git loc_marc2bibframe2; "
+      cmd += "fi"
+      execute cmd
+    end
+  end
+
+  desc 'git pull master for LOC marc2bibframe2'
+  task :update_marc2bibframe2 do
+    on roles(:app) do
+      execute "cd #{shared_path}/loc_marc2bibframe2 && git pull origin master"
     end
   end
 end
-after 'deploy:finished', 'maven:package'
+
+before 'loc:update_marc2bibframe2', 'loc:clone_marc2bibframe2'
+after 'deploy:finished', 'loc:clone_marc2bibframe2'
 
 namespace :deploy do
   # needs to be in deploy namespace so deploy_host is defined properly (part of current_path)
   desc 'convert test file of one record'
-  task :run_test do
+  task :test_one_record do
     on roles(:app) do
-      execute "cd #{current_path} && bin/marcxml_to_bf1_test.sh java/src/test/resources/one_record.xml"
+      execute "cd #{current_path} && ./bin/marcxml_to_bf2_test.sh ./data/MarcXML/one_record.xml"
     end
   end
 end

@@ -1,47 +1,28 @@
-[![Build Status](https://travis-ci.org/sul-dlss/ld4p-marcxml-to-bibframe1
-.svg?branch=master)](https://travis-ci.org/sul-dlss/ld4p-marcxml-to-bibframe1
-)
-[![Coverage Status](https://coveralls.io/repos/github/sul-dlss/ld4p-marcxml-to-bibframe1
-/badge.svg?branch=master)](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1?branch=master)
-[![Dependency Status](https://gemnasium.com/badges/github.com/sul-dlss/ld4p-marcxml-to-bibframe1.svg)](https://gemnasium.com/github.com/sul-dlss/ld4p-marcxml-to-bibframe1)
 
-# ld4p-marcxml-to-bibframe1
-Convert marcxml data into bibframe1 rdfxml, using converter written by Library of Congress, available at https://github.com/lcnetdev/marc2bibframe
+[![Dependency Status](https://gemnasium.com/badges/github.com/sul-dlss/ld4p-marcxml-to-bibframe2.svg)](https://gemnasium.com/github.com/sul-dlss/ld4p-marcxml-to-bibframe2)
+
+# ld4p-marcxml-to-bibframe2
+Convert MARC21 XML data into Bibframe2 RDF, using converter from Library of Congress,
+available at https://github.com/lcnetdev/marc2bibframe2
+
 
 ## Development
 
 ### Dependencies / Prerequisites
 
-- Java 8
-- Maven 3
-- Library of Congress Marc to Bibframe1 converter, installed at loc_marc2bibframe directory:
+- An XSLT processor, such as `xsltproc` from libxslt
+- Library of Congress Marc to bibframe2 converter, installed at loc_marc2bibframe directory:
 
-  `git clone https://github.com/lcnetdev/marc2bibframe.git loc_marc2bibframe`
+  `git clone https://github.com/lcnetdev/marc2bibframe2.git  loc_marc2bibframe2`
 
-### Compiling and Executing
+### Executing
 
-To compile and package the maven project:
+`./bin/marcxml_to_bf2_test.sh {MARC XML FILE}`
 
-  `mvn clean package`
+e.g.
 
-The resulting packaged JAR at `java/target/xform-marcxml-to-bf1-jar-with-dependencies.jar` includes all dependencies.
+`./bin/marcxml_to_bf2_test.sh ./data/MarcXML/one_record.xml`
 
-(Actually, the java code isn't currently used, and we really only need `saxon9he.jar` to run the converter.)
-
-### Code Coverage Reports
-
-To run the tests and view a coverage report from the command line:
-```
-mvn clean cobertura:cobertura
-ls -l target/site/cobertura/
-firefox target/site/cobertura/index.html
-```
-
-The [Travis CI](https://travis-ci.org/sul-dlss/ld4p-marcxml-to-bibframe1) builds run tests and submit
-a coverage report to [Coveralls](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1).
-To update Coveralls from the command line, try:
-
-  `mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken`
 
 ## Deployment
 
@@ -53,21 +34,10 @@ Capistrano is used for deployment.
 
   to install the Ruby capistrano gems and other dependencies for deployment.
 
-2. Set up shared directories on the remote VM:
-
-    ```
-    cd ld4p-marcxml-to-bibframe1
-    mkdir shared
-    mkdir shared/log
-    git clone https://github.com/lcnetdev/marc2bibframe.git shared/loc_marc2bibframe
-    ```
-
-3. Deploy code to remote VM:
+2. Deploy code to remote VM:
 
     `cap dev deploy`
 
-  This will also build and package the code on the remote VM with Maven.
+3. Run a test conversion to ensure it works on remote VM:
 
-4. Run a test marcxml file through the converter to ensure it works on remote VM:
-
-    `cap dev deploy:run_test`
+    `cap dev deploy:test_one_record`
