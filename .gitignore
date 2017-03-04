@@ -1,5 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 
+# Ruby
+.binstubs/
+.bundle/
+
 # Eclipse
 .classpath
 .project
@@ -19,9 +23,10 @@ files/
 log/*.log
 
 # submodule files
-loc_marc2bibframe/*
+loc_marc2bibframe2/*
 
-data
+# Ignore RDF outputs
+data/**/*.rdf
 
 # Development laptop scripts
 laptop*
