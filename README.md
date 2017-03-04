@@ -12,36 +12,13 @@ Convert marcxml data into bibframe1 rdfxml, using converter written by Library o
 
 ### Dependencies / Prerequisites
 
-- Java 8
-- Maven 3
 - Library of Congress Marc to Bibframe1 converter, installed at loc_marc2bibframe directory:
 
   `git clone https://github.com/lcnetdev/marc2bibframe.git loc_marc2bibframe`
 
 ### Compiling and Executing
 
-To compile and package the maven project:
-
-  `mvn clean package`
-
-The resulting packaged JAR at `java/target/xform-marcxml-to-bf1-jar-with-dependencies.jar` includes all dependencies.
-
-(Actually, the java code isn't currently used, and we really only need `saxon9he.jar` to run the converter.)
-
 ### Code Coverage Reports
-
-To run the tests and view a coverage report from the command line:
-```
-mvn clean cobertura:cobertura
-ls -l target/site/cobertura/
-firefox target/site/cobertura/index.html
-```
-
-The [Travis CI](https://travis-ci.org/sul-dlss/ld4p-marcxml-to-bibframe1) builds run tests and submit
-a coverage report to [Coveralls](https://coveralls.io/github/sul-dlss/ld4p-marcxml-to-bibframe1).
-To update Coveralls from the command line, try:
-
-  `mvn clean test cobertura:cobertura coveralls:report -DrepoToken=yourcoverallsprojectrepositorytoken`
 
 ## Deployment
 
