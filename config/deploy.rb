@@ -23,7 +23,7 @@ Capistrano::OneTimeKey.generate_one_time_key!
 # set :pty, true
 
 # Default value for :linked_files is []
-# append :linked_files, "config/database.yml", "config/secrets.yml"
+append :linked_files, "config/config.sh"
 
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'loc_marc2bibframe2'
