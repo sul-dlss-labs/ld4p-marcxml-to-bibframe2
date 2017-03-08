@@ -1,24 +1,24 @@
 #!/bin/bash
-#
-# Requires one input parameter - the path to a marcxml file.
-#
-# Convert marcxml file indicated in param to a Bibframe RDF file.
 
-BASEURI="http://ld4p-test.stanford.edu/"
+SCRIPT_PATH=$( cd $(dirname $0) && pwd -P )
+export LD4P_ROOT=$( cd "${SCRIPT_PATH}/.." && pwd -P )
+export LD4P_CONFIG="${LD4P_ROOT}/config/config.sh"
+source ${LD4P_CONFIG}
 
-BF2_XSL="loc_marc2bibframe2/xsl/marc2bibframe2.xsl"
+MARC_XML="${LD4P_MARCXML}/one_record.xml"
+MARC_RDF="${LD4P_MARCRDF}/one_record.rdf"
+if [ ! -f ${MARC_XML} ]; then
+    echo "Failed to locate MARC-XML file: ${MARC_XML}"
+    exit 1
+fi
 
-marcxml_file=$1
-marcrdf_file=$(echo "${marcxml_file}" | sed s/.xml$/.rdf/)
-
-xsltproc --stringparam baseuri ${BASEURI} ${BF2_XSL} ${marcxml_file} \
-  1> ${marcrdf_file}
+${CONVERT_SCRIPT} ${MARC_XML} > ${MARC_RDF}
 
 success=$?
 if [ ${success} ]; then
-  msg="SUCCESS transformed ${marcxml_file} to ${marcrdf_file}"
+  msg="SUCCESS transformed ${MARC_XML} to ${MARC_RDF}"
 else
-  msg="FAILED to transform ${marcxml_file} to ${marcrdf_file}"
+  msg="FAILED to transform ${MARC_XML} to ${MARC_RDF}"
 fi
 echo "${msg}"
 
