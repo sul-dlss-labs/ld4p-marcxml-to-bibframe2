@@ -1,16 +1,9 @@
 set :application, 'ld4p-marcxml-to-bibframe2'
 set :repo_url, 'https://github.com/sul-dlss/ld4p-marcxml-to-bibframe2.git'
-set :deploy_host, "sul-ld4p-converter-#{fetch(:stage)}.stanford.edu"
-set :user, 'ld4p'
 
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
-set :deploy_to, "/opt/app/#{fetch(:user)}/#{fetch(:application)}"
-
-server fetch(:deploy_host), user: fetch(:user), roles: 'app'
-
-# allow ssh to host
-Capistrano::OneTimeKey.generate_one_time_key!
+set :deploy_to, "/opt/app/ld4p/ld4p-marcxml-to-bibframe2"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
